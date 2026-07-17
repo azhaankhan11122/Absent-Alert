@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Attendance System</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="{{ url_for('students') }}">Students</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Student Management</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">Add New Student</div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('students') }}">
+                            <div class="mb-3">
+                                <label>Name</label>
+                                <input type="text" name="name" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Roll Number</label>
+                                <input type="text" name="roll_number" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Class</label>
+                                <input type="text" name="class_name" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Student Phone</label>
+                                <input type="text" name="phone_number" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label>Parent Phone (for SMS)</label>
+                                <input type="text" name="parent_phone" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Student</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">Bulk Import (CSV/XLSX)</div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('students') }}" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label>File Format: name, roll_number, class_name, phone_number, parent_phone</label>
+                                <input type="file" name="file" class="form-control" accept=".csv, .xlsx" required>
+                            </div>
+                            <button type="submit" class="btn btn-success">Upload</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Student List</span>
+                <form method="GET" action="{{ url_for('students') }}" class="d-flex">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Search students..." value="{{ search_query }}">
+                    <button type="submit" class="btn btn-outline-success">Search</button>
+                    {% if search_query %}
+                        <a href="{{ url_for('students') }}" class="btn btn-outline-secondary ms-2">Clear</a>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Roll No.</th>
+                            <th>Class</th>
+                            <th>Parent Phone</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ student.id }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.roll_number }}</td>
+                            <td>{{ student.class_name }}</td>
+                            <td>{{ student.parent_phone }}</td>
+                            <td>
+                                <a href="{{ url_for('edit_student', id=student.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{{ url_for('delete_student', id=student.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
