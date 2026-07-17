@@ -152,3 +152,37 @@ WHATSAPP_API_VERSION=v17.0
 3. Click **Send absent WhatsApp alerts**.
 4. The backend generates messages using the template: `{name} has missed {subjectName} from {startTime} to {endTime}`.
 5. The alerts are added as jobs to the queue. The background queue processor will pick them up, submit them to the WhatsApp Cloud API, and report statuses/errors under the **SMS Queue** tab.
+
+## Local WhatsApp Web JS Gateway (Alternative)
+
+Instead of the official WhatsApp Cloud API (which requires a Meta Business Account), you can route alerts through a local browser session using `whatsapp-web.js`. This spins up a Chromium browser instance locally and interacts directly with WhatsApp Web.
+
+### Setup & Run:
+
+1. **Install Dependencies**:
+   ```bash
+   cd whatsapp-service
+   npm install
+   ```
+
+2. **Configure Environment Variables**:
+   Create `whatsapp-service/.env`:
+   ```env
+   PORT=4001
+   WHATSAPP_SERVICE_API_KEY=absent_alert_secret_key_2026
+   ```
+
+3. **Configure Main Server to Route to Local Gateway**:
+   Open `server/.env` and update:
+   ```env
+   WHATSAPP_API_URL=http://localhost:4001/send-alert
+   WHATSAPP_ACCESS_TOKEN=absent_alert_secret_key_2026
+   ```
+
+4. **Launch the Gateway**:
+   ```bash
+   npm start
+   ```
+   * On initial run, a browser window will open (or a QR code will print in the console). Scan this QR code using the WhatsApp app on your phone.
+   * Session state is persisted in `whatsapp-service/.wwebjs_auth/session`, meaning subsequent launches will automatically authenticate without scanning.
+   * You can configure the gateway to run in headless or windowed mode inside [whatsapp-service/server.js](file:///Users/azhaankhan/Absent-Alert-1/whatsapp-service/server.js) under the `puppeteerConfig` parameters.
