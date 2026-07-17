@@ -110,6 +110,19 @@ function App() {
     }
   }
 
+  async function clearAllData() {
+    if (!window.confirm('Are you sure you want to delete all students, attendance records, and SMS queue history? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      await api.clearAllData();
+      setToast('Database cleared successfully.');
+      await loadAll();
+    } catch (error) {
+      setToast(error.message);
+    }
+  }
+
   return (
     <main>
       <header className="hero">
@@ -172,7 +185,17 @@ function App() {
           <button type="submit">{editingId ? 'Update student' : 'Add student'}</button>
         </form>
         <div className="panel">
-          <div className="panel-title"><h2>Students</h2><small>{students.length} result(s)</small></div>
+          <div className="panel-title">
+            <h2>Students</h2>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <small>{students.length} result(s)</small>
+              {students.length > 0 && (
+                <button className="danger ghost" onClick={clearAllData} style={{ padding: '4px 8px', fontSize: '12px' }}>
+                  Clear Database
+                </button>
+              )}
+            </div>
+          </div>
           <div className="cards">{students.map((student) => <article className="card" key={student.id}><b>{student.name}</b><small>{student.className} • Roll {student.rollNo}</small><small>{student.parentName || 'Parent'}: {student.parentPhone}</small><div><button onClick={() => { setEditingId(student.id); setForm(student); }}>Edit</button><button className="danger ghost" onClick={async () => { await api.deleteStudent(student.id); await loadAll(); }}>Delete</button></div></article>)}</div>
         </div>
       </section>}

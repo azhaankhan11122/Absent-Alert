@@ -60,6 +60,16 @@ export function studentsRouter(store) {
     res.status(deleted ? 204 : 404).send();
   });
 
+  router.post('/clear', async (req, res) => {
+    await store.update((data) => {
+      data.students = [];
+      data.attendance = [];
+      data.smsQueue = [];
+      return data;
+    });
+    res.json({ message: 'All student, attendance, and SMS queue data cleared successfully.' });
+  });
+
   router.post('/import', upload.single('file'), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'CSV or XLSX file is required.' });
     const lower = req.file.originalname.toLowerCase();
