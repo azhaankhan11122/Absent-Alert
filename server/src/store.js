@@ -8,7 +8,8 @@ const DEFAULT_DATA = {
   smsQueue: [],
   settings: {
     schoolName: 'Absent Alert',
-    absentSmsTemplate: 'Dear parent, {name} ({rollNo}) from class {className} is absent on {date}.'
+    absentSmsTemplate: 'Dear parent, {name} ({rollNo}) from class {className} is absent on {date}.',
+    absentWhatsAppTemplate: '{name} has missed {subjectName} from {startTime} to {endTime}'
   }
 };
 

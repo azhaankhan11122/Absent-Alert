@@ -20,6 +20,8 @@ function App() {
   const [trends, setTrends] = useState([]);
   const [queue, setQueue] = useState([]);
   const [gateway, setGateway] = useState({ ok: false, devices: [] });
+  const [whatsApp, setWhatsApp] = useState({ connected: false, configured: false, phoneNumberId: '' });
+  const [absentDetails, setAbsentDetails] = useState({ subjectName: '', startTime: '', endTime: '' });
   const [filters, setFilters] = useState({ q: '', className: '', date: today });
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
@@ -27,14 +29,15 @@ function App() {
   const [toast, setToast] = useState('');
 
   const loadAll = async () => {
-    const [studentsData, classesData, attendanceData, summaryData, trendsData, queueData, gatewayData] = await Promise.all([
+    const [studentsData, classesData, attendanceData, summaryData, trendsData, queueData, gatewayData, whatsAppData] = await Promise.all([
       api.getStudents({ q: filters.q, className: filters.className }),
       api.getClasses(),
       api.getAttendance({ date: filters.date, className: filters.className }),
       api.getSummary({ date: filters.date, className: filters.className }),
       api.getTrends({ className: filters.className, days: 14 }),
       api.getSmsQueue(),
-      api.getGatewayStatus()
+      api.getGatewayStatus(),
+      api.getWhatsAppStatus()
     ]);
     setStudents(studentsData);
     setClasses(classesData);
@@ -43,6 +46,7 @@ function App() {
     setTrends(trendsData);
     setQueue(queueData);
     setGateway(gatewayData);
+    setWhatsApp(whatsAppData);
   };
 
   useEffect(() => { loadAll().catch((error) => setToast(error.message)); }, [filters.q, filters.className, filters.date]);
@@ -50,6 +54,7 @@ function App() {
     const id = setInterval(() => {
       api.getSmsQueue().then(setQueue).catch(() => {});
       api.getGatewayStatus().then(setGateway).catch(() => {});
+      api.getWhatsAppStatus().then(setWhatsApp).catch(() => {});
     }, 7000);
     return () => clearInterval(id);
   }, []);
@@ -66,7 +71,13 @@ function App() {
   }
 
   async function mark(studentId, status) {
-    await api.markAttendance({ studentId, status, date: filters.date });
+    const payload = { studentId, status, date: filters.date };
+    if (status === 'absent') {
+      payload.subjectName = absentDetails.subjectName;
+      payload.startTime = absentDetails.startTime;
+      payload.endTime = absentDetails.endTime;
+    }
+    await api.markAttendance(payload);
     await loadAll();
   }
 
@@ -84,9 +95,19 @@ function App() {
   }
 
   async function queueAlerts() {
-    const result = await api.queueAbsentAlerts({ date: filters.date, className: filters.className });
-    setToast(`${result.queuedCount} SMS alert(s) queued.`);
+    const result = await api.queueAbsentWhatsAppAlerts({ date: filters.date, className: filters.className });
+    setToast(`${result.queuedCount} WhatsApp alert(s) queued.`);
     await loadAll();
+  }
+
+  async function loginWhatsApp() {
+    try {
+      const result = await api.loginWithWhatsApp();
+      setWhatsApp(result);
+      setToast('WhatsApp login completed.');
+    } catch (error) {
+      setToast(error.message);
+    }
   }
 
   return (
@@ -107,6 +128,8 @@ function App() {
         <label className="search"><Search size={18} /><input placeholder="Search by name, roll no, parent, phone" value={filters.q} onChange={(e) => setFilters({ ...filters, q: e.target.value })} /></label>
         <select value={filters.className} onChange={(e) => setFilters({ ...filters, className: e.target.value })}><option value="">All classes</option>{classes.map((c) => <option key={c}>{c}</option>)}</select>
         <input type="date" value={filters.date} onChange={(e) => setFilters({ ...filters, date: e.target.value })} />
+        <button className={whatsApp.connected ? 'ghost' : ''} onClick={loginWhatsApp}>{whatsApp.connected ? 'WhatsApp connected' : 'Login with WhatsApp'}</button>
+        <span className={`whatsapp-badge ${whatsApp.connected ? 'ok' : 'bad'}`}>{whatsApp.connected ? 'WhatsApp ready' : (whatsApp.configured ? 'Not connected' : 'Configure WhatsApp')}</span>
         <div className="segmented"><button className={view === 'attendance' ? 'active' : ''} onClick={() => setView('attendance')}>Attendance</button><button className={view === 'students' ? 'active' : ''} onClick={() => setView('students')}>Students</button><button className={view === 'sms' ? 'active' : ''} onClick={() => setView('sms')}>SMS Queue</button></div>
       </section>
 
@@ -126,7 +149,13 @@ function App() {
       </section>
 
       {view === 'attendance' && <section className="panel">
-        <div className="panel-title"><h2>Class-wise Attendance</h2><button className="danger" onClick={queueAlerts}><MessageSquare size={16} /> Queue absent SMS alerts</button></div>
+        <div className="panel-title"><h2>Class-wise Attendance</h2><button className="danger" onClick={queueAlerts}><MessageSquare size={16} /> Send absent WhatsApp alerts</button></div>
+        <div className="attendance-config">
+          <label>Subject name<input value={absentDetails.subjectName} onChange={(e) => setAbsentDetails({ ...absentDetails, subjectName: e.target.value })} placeholder="Math" /></label>
+          <label>Start time<input type="time" value={absentDetails.startTime} onChange={(e) => setAbsentDetails({ ...absentDetails, startTime: e.target.value })} /></label>
+          <label>End time<input type="time" value={absentDetails.endTime} onChange={(e) => setAbsentDetails({ ...absentDetails, endTime: e.target.value })} /></label>
+          <p className="hint">When you mark a student absent, this info will be included in WhatsApp notifications.</p>
+        </div>
         <div className="table">
           <div className="tr head"><span>Roll</span><span>Name</span><span>Class</span><span>Parent Phone</span><span>Status</span></div>
           {attendance.map(({ student, status }) => <div className="tr" key={student.id}>

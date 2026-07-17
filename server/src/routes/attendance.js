@@ -23,18 +23,41 @@ export function attendanceRouter(store, smsQueue) {
       return res.status(400).json({ error: 'studentId and valid status (present, absent, late) are required.' });
     }
     const record = await store.update((data) => {
-      if (!data.students.some((student) => student.id === studentId)) return null;
-      let row = data.attendance.find((item) => item.studentId === studentId && item.date === date);
+      const student = data.students.find((item) => item.id === studentId);
+      if (!student) return null;
+      let row = data.attendance.find((item) => item.studentId === student.id && item.date === date);
       if (!row) {
-        row = { id: newId('att'), studentId, date, status, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+        row = {
+          id: newId('att'),
+          studentId,
+          date,
+          status,
+          subjectName: status === 'absent' ? String(req.body.subjectName || '').trim() : undefined,
+          startTime: status === 'absent' ? String(req.body.startTime || '').trim() : undefined,
+          endTime: status === 'absent' ? String(req.body.endTime || '').trim() : undefined,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
         data.attendance.push(row);
       } else {
         row.status = status;
+        if (status === 'absent') {
+          row.subjectName = String(req.body.subjectName || row.subjectName || '').trim();
+          row.startTime = String(req.body.startTime || row.startTime || '').trim();
+          row.endTime = String(req.body.endTime || row.endTime || '').trim();
+        } else {
+          delete row.subjectName;
+          delete row.startTime;
+          delete row.endTime;
+        }
         row.updatedAt = new Date().toISOString();
       }
       return row;
     });
     if (!record) return res.status(404).json({ error: 'Student not found.' });
+    if (status === 'absent') {
+      await smsQueue.enqueueAbsentWhatsAppAlerts({ date, studentIds: [studentId] });
+    }
     res.json(record);
   });
 
@@ -47,21 +70,49 @@ export function attendanceRouter(store, smsQueue) {
         if (!data.students.some((student) => student.id === entry.studentId)) continue;
         let row = data.attendance.find((item) => item.studentId === entry.studentId && item.date === date);
         if (!row) {
-          row = { id: newId('att'), studentId: entry.studentId, date, status: entry.status, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+          row = {
+            id: newId('att'),
+            studentId: entry.studentId,
+            date,
+            status: entry.status,
+            subjectName: entry.status === 'absent' ? String(entry.subjectName || '').trim() : undefined,
+            startTime: entry.status === 'absent' ? String(entry.startTime || '').trim() : undefined,
+            endTime: entry.status === 'absent' ? String(entry.endTime || '').trim() : undefined,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
           data.attendance.push(row);
         } else {
           row.status = entry.status;
+          if (entry.status === 'absent') {
+            row.subjectName = String(entry.subjectName || row.subjectName || '').trim();
+            row.startTime = String(entry.startTime || row.startTime || '').trim();
+            row.endTime = String(entry.endTime || row.endTime || '').trim();
+          } else {
+            delete row.subjectName;
+            delete row.startTime;
+            delete row.endTime;
+          }
           row.updatedAt = new Date().toISOString();
         }
         out.push(row);
       }
       return out;
     });
+    const absentIds = saved.filter((item) => item.status === 'absent').map((item) => item.studentId);
+    if (absentIds.length) {
+      await smsQueue.enqueueAbsentWhatsAppAlerts({ date, studentIds: absentIds });
+    }
     res.json(saved);
   });
 
   router.post('/queue-absent-alerts', async (req, res) => {
     const queued = await smsQueue.enqueueAbsentAlerts(req.body);
+    res.status(201).json({ queuedCount: queued.length, queued });
+  });
+
+  router.post('/queue-absent-whatsapp-alerts', async (req, res) => {
+    const queued = await smsQueue.enqueueAbsentWhatsAppAlerts(req.body);
     res.status(201).json({ queuedCount: queued.length, queued });
   });
 

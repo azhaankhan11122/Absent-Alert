@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JsonStore } from './store.js';
 import { AdbSmsGateway } from './services/adbGateway.js';
+import { WhatsAppGateway } from './services/whatsappGateway.js';
 import { SmsQueueService } from './services/smsQueue.js';
 import { studentsRouter } from './routes/students.js';
 import { attendanceRouter } from './routes/attendance.js';
@@ -20,13 +21,18 @@ const config = {
   adbSerial: process.env.ADB_SERIAL || '',
   gatewayMode: process.env.SMS_GATEWAY_MODE || 'broadcast',
   gatewayAction: process.env.SMS_GATEWAY_ACTION || 'com.absentalert.SEND_SMS',
-  gatewayPackage: process.env.SMS_GATEWAY_PACKAGE || ''
+  gatewayPackage: process.env.SMS_GATEWAY_PACKAGE || '',
+  whatsAppAccessToken: process.env.WHATSAPP_ACCESS_TOKEN || '',
+  whatsAppPhoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID || '',
+  whatsAppApiUrl: process.env.WHATSAPP_API_URL || '',
+  whatsAppApiVersion: process.env.WHATSAPP_API_VERSION || 'v17.0'
 };
 
 const store = new JsonStore(config.dataFile);
 await store.init();
 const gateway = new AdbSmsGateway(config);
-const smsQueue = new SmsQueueService(store, gateway, config);
+const whatsappGateway = new WhatsAppGateway(config);
+const smsQueue = new SmsQueueService(store, gateway, whatsappGateway, config);
 smsQueue.start();
 
 const app = express();
@@ -36,7 +42,7 @@ app.use(express.json({ limit: '1mb' }));
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'absent-alert-api' }));
 app.use('/api/students', studentsRouter(store));
 app.use('/api/attendance', attendanceRouter(store, smsQueue));
-app.use('/api', metaRouter(store, gateway, smsQueue));
+app.use('/api', metaRouter(store, gateway, smsQueue, whatsappGateway));
 
 app.use((err, _req, res, _next) => {
   console.error(err);

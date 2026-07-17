@@ -36,6 +36,30 @@ Existing students are updated when `rollNo + className` matches.
 
 The backend keeps a persistent SMS queue and retries failed sends with exponential backoff. It checks `adb devices` before every send.
 
+## WhatsApp Business notifications
+
+The app now supports sending absence notifications via WhatsApp. When a student is marked absent, the UI can capture:
+
+- `subjectName`
+- `startTime`
+- `endTime`
+
+These values are used to render a message like:
+
+`[STUDENT_NAME] has missed [CLASS_SUBJECT_NAME] from [START_TIME] to [END_TIME]`
+
+Configure WhatsApp credentials in `server/.env`:
+
+```env
+WHATSAPP_ACCESS_TOKEN=your_whatsapp_access_token
+WHATSAPP_PHONE_NUMBER_ID=your_whatsapp_phone_number_id
+WHATSAPP_API_VERSION=v17.0
+# Optional override if you need a custom endpoint URL
+WHATSAPP_API_URL=
+```
+
+The frontend includes a `Login with WhatsApp` button, and absent students marked in the attendance view will automatically enqueue WhatsApp alert jobs for parents.
+
 ### Recommended automated mode
 
 Install a small Android gateway app on the phone that exposes a broadcast receiver/service with `SEND_SMS` permission. Configure:
@@ -82,5 +106,8 @@ This opens the native Android SMS composer via ADB. It is useful for testing pho
 - `GET /api/attendance/summary`
 - `GET /api/attendance/trends`
 - `POST /api/attendance/queue-absent-alerts`
+- `POST /api/attendance/queue-absent-whatsapp-alerts`
 - `GET /api/gateway/status`
+- `GET /api/whatsapp/status`
+- `POST /api/whatsapp/login`
 - `GET /api/sms-queue`

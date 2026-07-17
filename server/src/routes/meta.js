@@ -1,6 +1,6 @@
 import express from 'express';
 
-export function metaRouter(store, gateway, smsQueue) {
+export function metaRouter(store, gateway, smsQueue, whatsappGateway) {
   const router = express.Router();
 
   router.get('/classes', async (_req, res) => {
@@ -23,6 +23,47 @@ export function metaRouter(store, gateway, smsQueue) {
 
   router.get('/gateway/status', async (_req, res) => {
     res.json(await gateway.getStatus());
+  });
+
+  router.get('/whatsapp/status', async (_req, res) => {
+    try {
+      await whatsappGateway.validateConfig();
+      const data = await store.read();
+      res.json({
+        ok: true,
+        provider: 'whatsapp',
+        connected: Boolean(data.settings.whatsAppAuthenticated),
+        configured: true,
+        phoneNumberId: whatsappGateway.config.whatsAppPhoneNumberId || ''
+      });
+    } catch (error) {
+      const data = await store.read();
+      res.json({
+        ok: false,
+        provider: 'whatsapp',
+        connected: Boolean(data.settings.whatsAppAuthenticated),
+        configured: false,
+        error: error.message
+      });
+    }
+  });
+
+  router.post('/whatsapp/login', async (_req, res) => {
+    try {
+      await whatsappGateway.validateConfig();
+      const settings = await store.update((data) => {
+        data.settings.whatsAppAuthenticated = true;
+        data.settings.whatsAppPhoneNumberId = whatsappGateway.config.whatsAppPhoneNumberId || data.settings.whatsAppPhoneNumberId || '';
+        return data.settings;
+      });
+      res.json({
+        connected: true,
+        configured: true,
+        phoneNumberId: settings.whatsAppPhoneNumberId || ''
+      });
+    } catch (error) {
+      res.status(400).json({ ok: false, error: error.message });
+    }
   });
 
   router.get('/sms-queue', async (_req, res) => {

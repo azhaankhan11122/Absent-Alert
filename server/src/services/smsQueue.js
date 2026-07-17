@@ -5,9 +5,10 @@ const dueNow = (job) => !job.nextAttemptAt || new Date(job.nextAttemptAt).getTim
 const backoffMinutes = (attempts) => Math.min(60, 2 ** Math.max(0, attempts - 1));
 
 export class SmsQueueService {
-  constructor(store, gateway, config) {
+  constructor(store, smsGateway, whatsappGateway, config) {
     this.store = store;
-    this.gateway = gateway;
+    this.smsGateway = smsGateway;
+    this.whatsappGateway = whatsappGateway;
     this.config = config;
     this.timer = null;
     this.processing = false;
@@ -35,25 +36,53 @@ export class SmsQueueService {
       for (const student of students) {
         const existing = data.smsQueue.find((job) => job.studentId === student.id && job.date === date && ['queued', 'processing', 'sent'].includes(job.status));
         if (existing) continue;
-        const job = {
-          id: newId('sms'),
-          studentId: student.id,
-          phone: student.parentPhone,
-          message: renderTemplate(data.settings.absentSmsTemplate, student, date),
-          date,
-          status: 'queued',
-          attempts: 0,
-          maxAttempts: this.config.maxSmsAttempts,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          lastError: null,
-          providerResponse: null
-        };
+        const record = data.attendance.find((row) => row.studentId === student.id && row.date === date) || {};
+        const job = this.createJob(student, renderTemplate(data.settings.absentSmsTemplate, student, record, date), date, 'sms');
         data.smsQueue.push(job);
         queued.push(job);
       }
       return queued;
     });
+  }
+
+  async enqueueAbsentWhatsAppAlerts({ date = todayISO(), className, studentIds = [] } = {}) {
+    return this.store.update((data) => {
+      const students = data.students.filter((student) => {
+        if (studentIds.length && !studentIds.includes(student.id)) return false;
+        if (className && student.className !== className) return false;
+        const record = data.attendance.find((row) => row.studentId === student.id && row.date === date);
+        return record?.status === 'absent' && student.parentPhone;
+      });
+
+      const queued = [];
+      for (const student of students) {
+        const existing = data.smsQueue.find((job) => job.studentId === student.id && job.date === date && ['queued', 'processing', 'sent'].includes(job.status) && job.provider === 'whatsapp');
+        if (existing) continue;
+        const record = data.attendance.find((row) => row.studentId === student.id && row.date === date) || {};
+        const job = this.createJob(student, renderTemplate(data.settings.absentWhatsAppTemplate, student, record, date), date, 'whatsapp');
+        data.smsQueue.push(job);
+        queued.push(job);
+      }
+      return queued;
+    });
+  }
+
+  createJob(student, message, date, provider) {
+    return {
+      id: newId('sms'),
+      studentId: student.id,
+      phone: student.parentPhone,
+      message,
+      date,
+      provider,
+      status: 'queued',
+      attempts: 0,
+      maxAttempts: this.config.maxSmsAttempts,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      lastError: null,
+      providerResponse: null
+    };
   }
 
   async list() {
@@ -90,7 +119,9 @@ export class SmsQueueService {
       });
 
       try {
-        const response = await this.gateway.sendSms(next.phone, next.message);
+        const response = next.provider === 'whatsapp'
+          ? await this.whatsappGateway.sendWhatsApp(next.phone, next.message)
+          : await this.smsGateway.sendSms(next.phone, next.message);
         await this.store.update((state) => {
           const job = state.smsQueue.find((item) => item.id === next.id);
           if (!job) return;

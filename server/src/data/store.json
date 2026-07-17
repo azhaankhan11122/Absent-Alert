@@ -1,6 +1,1032 @@
 {
-  "students": [],
-  "attendance": [],
+  "students": [
+    {
+      "id": "stu_8VH-4b77Dr",
+      "rollNo": "001",
+      "name": "Aarav Desai",
+      "className": "6A",
+      "parentName": "Prakash Desai",
+      "parentPhone": "9400000001",
+      "createdAt": "2026-07-17T09:03:16.193Z",
+      "updatedAt": "2026-07-17T09:03:16.193Z"
+    },
+    {
+      "id": "stu_adhB8pLc6B",
+      "rollNo": "002",
+      "name": "Vivaan Naik",
+      "className": "6A",
+      "parentName": "Meena Naik",
+      "parentPhone": "9400000002",
+      "createdAt": "2026-07-17T09:03:16.193Z",
+      "updatedAt": "2026-07-17T09:03:16.193Z"
+    },
+    {
+      "id": "stu_cG-7zBVube",
+      "rollNo": "003",
+      "name": "Aditya Sharma",
+      "className": "6A",
+      "parentName": "Suresh Sharma",
+      "parentPhone": "9400000003",
+      "createdAt": "2026-07-17T09:03:16.193Z",
+      "updatedAt": "2026-07-17T09:03:16.193Z"
+    },
+    {
+      "id": "stu_CF72kUisId",
+      "rollNo": "004",
+      "name": "Vihaan Verma",
+      "className": "6A",
+      "parentName": "Deepak Verma",
+      "parentPhone": "9400000004",
+      "createdAt": "2026-07-17T09:03:16.193Z",
+      "updatedAt": "2026-07-17T09:03:16.193Z"
+    },
+    {
+      "id": "stu_8PmK2VvsKq",
+      "rollNo": "005",
+      "name": "Arjun Jadhav",
+      "className": "6A",
+      "parentName": "Kavita Jadhav",
+      "parentPhone": "9400000005",
+      "createdAt": "2026-07-17T09:03:16.193Z",
+      "updatedAt": "2026-07-17T09:03:16.193Z"
+    },
+    {
+      "id": "stu_4JuOnilgbt",
+      "rollNo": "006",
+      "name": "Sai Shaikh",
+      "className": "6A",
+      "parentName": "Mahesh Shaikh",
+      "parentPhone": "9400000006",
+      "createdAt": "2026-07-17T09:03:16.193Z",
+      "updatedAt": "2026-07-17T09:03:16.193Z"
+    },
+    {
+      "id": "stu_y43oPtN9iM",
+      "rollNo": "007",
+      "name": "Reyansh Khan",
+      "className": "6A",
+      "parentName": "Anil Khan",
+      "parentPhone": "9400000007",
+      "createdAt": "2026-07-17T09:03:16.193Z",
+      "updatedAt": "2026-07-17T09:03:16.193Z"
+    },
+    {
+      "id": "stu_D8fwwces7d",
+      "rollNo": "008",
+      "name": "Ayaan Joshi",
+      "className": "6A",
+      "parentName": "Naseem Joshi",
+      "parentPhone": "9400000008",
+      "createdAt": "2026-07-17T09:03:16.193Z",
+      "updatedAt": "2026-07-17T09:03:16.193Z"
+    },
+    {
+      "id": "stu_fI54ngi8AG",
+      "rollNo": "009",
+      "name": "Krishna Gowda",
+      "className": "6A",
+      "parentName": "Ramesh Gowda",
+      "parentPhone": "9400000009",
+      "createdAt": "2026-07-17T09:03:16.193Z",
+      "updatedAt": "2026-07-17T09:03:16.193Z"
+    },
+    {
+      "id": "stu_D5gKtNawad",
+      "rollNo": "010",
+      "name": "Ishaan Mishra",
+      "className": "6A",
+      "parentName": "Sunita Mishra",
+      "parentPhone": "9400000010",
+      "createdAt": "2026-07-17T09:03:16.193Z",
+      "updatedAt": "2026-07-17T09:03:16.193Z"
+    },
+    {
+      "id": "stu_vcwH7cVLrF",
+      "rollNo": "011",
+      "name": "Shaurya Singh",
+      "className": "6B",
+      "parentName": "Geeta Singh",
+      "parentPhone": "9400000011",
+      "createdAt": "2026-07-17T09:03:16.193Z",
+      "updatedAt": "2026-07-17T09:03:16.193Z"
+    },
+    {
+      "id": "stu_GMXZiYTjJU",
+      "rollNo": "012",
+      "name": "Atharv Pawar",
+      "className": "6B",
+      "parentName": "Amit Pawar",
+      "parentPhone": "9400000012",
+      "createdAt": "2026-07-17T09:03:16.193Z",
+      "updatedAt": "2026-07-17T09:03:16.193Z"
+    },
+    {
+      "id": "stu_A3ecnyR0ge",
+      "rollNo": "013",
+      "name": "Advik Nair",
+      "className": "6B",
+      "parentName": "Asha Nair",
+      "parentPhone": "9400000013",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_skCUUheuRI",
+      "rollNo": "014",
+      "name": "Pranav Kulkarni",
+      "className": "6B",
+      "parentName": "Latha Kulkarni",
+      "parentPhone": "9400000014",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_OMi8CMbjII",
+      "rollNo": "015",
+      "name": "Kabir Shetty",
+      "className": "6B",
+      "parentName": "Imran Shetty",
+      "parentPhone": "9400000015",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_KJ5oD8-uJq",
+      "rollNo": "016",
+      "name": "Rudra Rao",
+      "className": "6B",
+      "parentName": "Farah Rao",
+      "parentPhone": "9400000016",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_aVvfOMt95u",
+      "rollNo": "017",
+      "name": "Anika Reddy",
+      "className": "6B",
+      "parentName": "Shaila Reddy",
+      "parentPhone": "9400000017",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_z226rUjVzw",
+      "rollNo": "018",
+      "name": "Aadhya Hegde",
+      "className": "6B",
+      "parentName": "Sameer Hegde",
+      "parentPhone": "9400000018",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_sJvUYi3kvK",
+      "rollNo": "019",
+      "name": "Diya More",
+      "className": "6B",
+      "parentName": "Pooja More",
+      "parentPhone": "9400000019",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_bPJadeCLgX",
+      "rollNo": "020",
+      "name": "Myra Patil",
+      "className": "6B",
+      "parentName": "Rajesh Patil",
+      "parentPhone": "9400000020",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_m7bz0oDpqE",
+      "rollNo": "021",
+      "name": "Sara Desai",
+      "className": "7A",
+      "parentName": "Prakash Desai",
+      "parentPhone": "9400000021",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_7LF7guYjCY",
+      "rollNo": "022",
+      "name": "Ira Naik",
+      "className": "7A",
+      "parentName": "Meena Naik",
+      "parentPhone": "9400000022",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_P-NK0jXGSi",
+      "rollNo": "023",
+      "name": "Anaya Sharma",
+      "className": "7A",
+      "parentName": "Suresh Sharma",
+      "parentPhone": "9400000023",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_DXsJe3pdr0",
+      "rollNo": "024",
+      "name": "Pari Verma",
+      "className": "7A",
+      "parentName": "Deepak Verma",
+      "parentPhone": "9400000024",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_MuKr5VJbw3",
+      "rollNo": "025",
+      "name": "Kiara Jadhav",
+      "className": "7A",
+      "parentName": "Kavita Jadhav",
+      "parentPhone": "9400000025",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_15JdEj_MzY",
+      "rollNo": "026",
+      "name": "Aarav Shaikh",
+      "className": "7A",
+      "parentName": "Mahesh Shaikh",
+      "parentPhone": "9400000026",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_w1LWyQv1Ut",
+      "rollNo": "027",
+      "name": "Vivaan Khan",
+      "className": "7A",
+      "parentName": "Anil Khan",
+      "parentPhone": "9400000027",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_yDwNpGMkXP",
+      "rollNo": "028",
+      "name": "Aditya Joshi",
+      "className": "7A",
+      "parentName": "Naseem Joshi",
+      "parentPhone": "9400000028",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_0jFUXTwu_Z",
+      "rollNo": "029",
+      "name": "Vihaan Gowda",
+      "className": "7A",
+      "parentName": "Ramesh Gowda",
+      "parentPhone": "9400000029",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_BuLqb6_wAJ",
+      "rollNo": "030",
+      "name": "Arjun Mishra",
+      "className": "7A",
+      "parentName": "Sunita Mishra",
+      "parentPhone": "9400000030",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_uB6fphZv0o",
+      "rollNo": "031",
+      "name": "Sai Singh",
+      "className": "7B",
+      "parentName": "Geeta Singh",
+      "parentPhone": "9400000031",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_kMQgj1ryRY",
+      "rollNo": "032",
+      "name": "Reyansh Pawar",
+      "className": "7B",
+      "parentName": "Amit Pawar",
+      "parentPhone": "9400000032",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_PFMfe6DUur",
+      "rollNo": "033",
+      "name": "Ayaan Nair",
+      "className": "7B",
+      "parentName": "Asha Nair",
+      "parentPhone": "9400000033",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_paVAw0IF8k",
+      "rollNo": "034",
+      "name": "Krishna Kulkarni",
+      "className": "7B",
+      "parentName": "Latha Kulkarni",
+      "parentPhone": "9400000034",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_RJyKJgX3NA",
+      "rollNo": "035",
+      "name": "Ishaan Shetty",
+      "className": "7B",
+      "parentName": "Imran Shetty",
+      "parentPhone": "9400000035",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_g84VTgO5bX",
+      "rollNo": "036",
+      "name": "Shaurya Rao",
+      "className": "7B",
+      "parentName": "Farah Rao",
+      "parentPhone": "9400000036",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_W5VFEI3iia",
+      "rollNo": "037",
+      "name": "Atharv Reddy",
+      "className": "7B",
+      "parentName": "Shaila Reddy",
+      "parentPhone": "9400000037",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_YZP7JSBIKq",
+      "rollNo": "038",
+      "name": "Advik Hegde",
+      "className": "7B",
+      "parentName": "Sameer Hegde",
+      "parentPhone": "9400000038",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_XkTr9hfQTg",
+      "rollNo": "039",
+      "name": "Pranav More",
+      "className": "7B",
+      "parentName": "Pooja More",
+      "parentPhone": "9400000039",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_oTeI8ky8Nf",
+      "rollNo": "040",
+      "name": "Kabir Patil",
+      "className": "7B",
+      "parentName": "Rajesh Patil",
+      "parentPhone": "9400000040",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_q68cfXhb8F",
+      "rollNo": "041",
+      "name": "Rudra Desai",
+      "className": "8A",
+      "parentName": "Prakash Desai",
+      "parentPhone": "9400000041",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_9IZWFHmuDb",
+      "rollNo": "042",
+      "name": "Anika Naik",
+      "className": "8A",
+      "parentName": "Meena Naik",
+      "parentPhone": "9400000042",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_PcOsxCOcY_",
+      "rollNo": "043",
+      "name": "Aadhya Sharma",
+      "className": "8A",
+      "parentName": "Suresh Sharma",
+      "parentPhone": "9400000043",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_2lKnQEQ15k",
+      "rollNo": "044",
+      "name": "Diya Verma",
+      "className": "8A",
+      "parentName": "Deepak Verma",
+      "parentPhone": "9400000044",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_jyDBp1jJP-",
+      "rollNo": "045",
+      "name": "Myra Jadhav",
+      "className": "8A",
+      "parentName": "Kavita Jadhav",
+      "parentPhone": "9400000045",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_KH6UlpMDYG",
+      "rollNo": "046",
+      "name": "Sara Shaikh",
+      "className": "8A",
+      "parentName": "Mahesh Shaikh",
+      "parentPhone": "9400000046",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_tBFOrHMXDO",
+      "rollNo": "047",
+      "name": "Ira Khan",
+      "className": "8A",
+      "parentName": "Anil Khan",
+      "parentPhone": "9400000047",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_ToVJ7hKg9p",
+      "rollNo": "048",
+      "name": "Anaya Joshi",
+      "className": "8A",
+      "parentName": "Naseem Joshi",
+      "parentPhone": "9400000048",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_OaEzndfWYl",
+      "rollNo": "049",
+      "name": "Pari Gowda",
+      "className": "8A",
+      "parentName": "Ramesh Gowda",
+      "parentPhone": "9400000049",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_YPZseSzhsB",
+      "rollNo": "050",
+      "name": "Kiara Mishra",
+      "className": "8A",
+      "parentName": "Sunita Mishra",
+      "parentPhone": "9400000050",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_2A94UaQcfT",
+      "rollNo": "051",
+      "name": "Aarav Singh",
+      "className": "8B",
+      "parentName": "Geeta Singh",
+      "parentPhone": "9400000051",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_OODzbdqUaz",
+      "rollNo": "052",
+      "name": "Vivaan Pawar",
+      "className": "8B",
+      "parentName": "Amit Pawar",
+      "parentPhone": "9400000052",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_4lxj55DnQJ",
+      "rollNo": "053",
+      "name": "Aditya Nair",
+      "className": "8B",
+      "parentName": "Asha Nair",
+      "parentPhone": "9400000053",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_OyGAf2skd_",
+      "rollNo": "054",
+      "name": "Vihaan Kulkarni",
+      "className": "8B",
+      "parentName": "Latha Kulkarni",
+      "parentPhone": "9400000054",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_bhXwV05eGr",
+      "rollNo": "055",
+      "name": "Arjun Shetty",
+      "className": "8B",
+      "parentName": "Imran Shetty",
+      "parentPhone": "9400000055",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_EwlenN15X6",
+      "rollNo": "056",
+      "name": "Sai Rao",
+      "className": "8B",
+      "parentName": "Farah Rao",
+      "parentPhone": "9400000056",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_mOnqzejbc1",
+      "rollNo": "057",
+      "name": "Reyansh Reddy",
+      "className": "8B",
+      "parentName": "Shaila Reddy",
+      "parentPhone": "9400000057",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_V8jECPqqDP",
+      "rollNo": "058",
+      "name": "Ayaan Hegde",
+      "className": "8B",
+      "parentName": "Sameer Hegde",
+      "parentPhone": "9400000058",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_173vJWNRQn",
+      "rollNo": "059",
+      "name": "Krishna More",
+      "className": "8B",
+      "parentName": "Pooja More",
+      "parentPhone": "9400000059",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_r2mS-SmWIE",
+      "rollNo": "060",
+      "name": "Ishaan Patil",
+      "className": "8B",
+      "parentName": "Rajesh Patil",
+      "parentPhone": "9400000060",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_pKW4ke_hbM",
+      "rollNo": "061",
+      "name": "Shaurya Desai",
+      "className": "9A",
+      "parentName": "Prakash Desai",
+      "parentPhone": "9400000061",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_4-t13gf5vP",
+      "rollNo": "062",
+      "name": "Atharv Naik",
+      "className": "9A",
+      "parentName": "Meena Naik",
+      "parentPhone": "9400000062",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_n8M1m6ChtZ",
+      "rollNo": "063",
+      "name": "Advik Sharma",
+      "className": "9A",
+      "parentName": "Suresh Sharma",
+      "parentPhone": "9400000063",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_YtQFmpcVIw",
+      "rollNo": "064",
+      "name": "Pranav Verma",
+      "className": "9A",
+      "parentName": "Deepak Verma",
+      "parentPhone": "9400000064",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_fO_88wIJJL",
+      "rollNo": "065",
+      "name": "Kabir Jadhav",
+      "className": "9A",
+      "parentName": "Kavita Jadhav",
+      "parentPhone": "9400000065",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_ZLlJERbjJM",
+      "rollNo": "066",
+      "name": "Rudra Shaikh",
+      "className": "9A",
+      "parentName": "Mahesh Shaikh",
+      "parentPhone": "9400000066",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_mTvScuSupz",
+      "rollNo": "067",
+      "name": "Anika Khan",
+      "className": "9A",
+      "parentName": "Anil Khan",
+      "parentPhone": "9400000067",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_E11SSN0sJz",
+      "rollNo": "068",
+      "name": "Aadhya Joshi",
+      "className": "9A",
+      "parentName": "Naseem Joshi",
+      "parentPhone": "9400000068",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_Ne3fNVXzI3",
+      "rollNo": "069",
+      "name": "Diya Gowda",
+      "className": "9A",
+      "parentName": "Ramesh Gowda",
+      "parentPhone": "9400000069",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_u9GACXNX9c",
+      "rollNo": "070",
+      "name": "Myra Mishra",
+      "className": "9A",
+      "parentName": "Sunita Mishra",
+      "parentPhone": "9400000070",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_Q_zjPJ4-t-",
+      "rollNo": "071",
+      "name": "Sara Singh",
+      "className": "9B",
+      "parentName": "Geeta Singh",
+      "parentPhone": "9400000071",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_u6488a2svI",
+      "rollNo": "072",
+      "name": "Ira Pawar",
+      "className": "9B",
+      "parentName": "Amit Pawar",
+      "parentPhone": "9400000072",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_uUUo7NepnE",
+      "rollNo": "073",
+      "name": "Anaya Nair",
+      "className": "9B",
+      "parentName": "Asha Nair",
+      "parentPhone": "9400000073",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_PuwL3eg1cs",
+      "rollNo": "074",
+      "name": "Pari Kulkarni",
+      "className": "9B",
+      "parentName": "Latha Kulkarni",
+      "parentPhone": "9400000074",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_Q2TSt-AObr",
+      "rollNo": "075",
+      "name": "Kiara Shetty",
+      "className": "9B",
+      "parentName": "Imran Shetty",
+      "parentPhone": "9400000075",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_FD74KyWC1i",
+      "rollNo": "076",
+      "name": "Aarav Rao",
+      "className": "9B",
+      "parentName": "Farah Rao",
+      "parentPhone": "9400000076",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_8nSAyTccZy",
+      "rollNo": "077",
+      "name": "Vivaan Reddy",
+      "className": "9B",
+      "parentName": "Shaila Reddy",
+      "parentPhone": "9400000077",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_Q-KpyjXVYV",
+      "rollNo": "078",
+      "name": "Aditya Hegde",
+      "className": "9B",
+      "parentName": "Sameer Hegde",
+      "parentPhone": "9400000078",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_kMgZ-JFy_e",
+      "rollNo": "079",
+      "name": "Vihaan More",
+      "className": "9B",
+      "parentName": "Pooja More",
+      "parentPhone": "9400000079",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_T7f7dRwsqY",
+      "rollNo": "080",
+      "name": "Arjun Patil",
+      "className": "9B",
+      "parentName": "Rajesh Patil",
+      "parentPhone": "9400000080",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_VrsuiQuevI",
+      "rollNo": "081",
+      "name": "Sai Desai",
+      "className": "10A",
+      "parentName": "Prakash Desai",
+      "parentPhone": "9400000081",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_puZgZqTco4",
+      "rollNo": "082",
+      "name": "Reyansh Naik",
+      "className": "10A",
+      "parentName": "Meena Naik",
+      "parentPhone": "9400000082",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_4Jx8pEj0Cm",
+      "rollNo": "083",
+      "name": "Ayaan Sharma",
+      "className": "10A",
+      "parentName": "Suresh Sharma",
+      "parentPhone": "9400000083",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_dw-I0mBqt9",
+      "rollNo": "084",
+      "name": "Krishna Verma",
+      "className": "10A",
+      "parentName": "Deepak Verma",
+      "parentPhone": "9400000084",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_1REVFhOMAn",
+      "rollNo": "085",
+      "name": "Ishaan Jadhav",
+      "className": "10A",
+      "parentName": "Kavita Jadhav",
+      "parentPhone": "9400000085",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_azXDaPnxDI",
+      "rollNo": "086",
+      "name": "Shaurya Shaikh",
+      "className": "10A",
+      "parentName": "Mahesh Shaikh",
+      "parentPhone": "9400000086",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_N0gWD7iLjp",
+      "rollNo": "087",
+      "name": "Atharv Khan",
+      "className": "10A",
+      "parentName": "Anil Khan",
+      "parentPhone": "9400000087",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_78N_LkHPMI",
+      "rollNo": "088",
+      "name": "Advik Joshi",
+      "className": "10A",
+      "parentName": "Naseem Joshi",
+      "parentPhone": "9400000088",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_3KdqUo3mAs",
+      "rollNo": "089",
+      "name": "Pranav Gowda",
+      "className": "10A",
+      "parentName": "Ramesh Gowda",
+      "parentPhone": "9400000089",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_bBJeMJSLC-",
+      "rollNo": "090",
+      "name": "Kabir Mishra",
+      "className": "10A",
+      "parentName": "Sunita Mishra",
+      "parentPhone": "9400000090",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_3scKXn3qaV",
+      "rollNo": "091",
+      "name": "Rudra Singh",
+      "className": "10B",
+      "parentName": "Geeta Singh",
+      "parentPhone": "9400000091",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_xk7PrWf_MW",
+      "rollNo": "092",
+      "name": "Anika Pawar",
+      "className": "10B",
+      "parentName": "Amit Pawar",
+      "parentPhone": "9400000092",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_o0nsG5Ari7",
+      "rollNo": "093",
+      "name": "Aadhya Nair",
+      "className": "10B",
+      "parentName": "Asha Nair",
+      "parentPhone": "9400000093",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_IDG0wqSl3E",
+      "rollNo": "094",
+      "name": "Diya Kulkarni",
+      "className": "10B",
+      "parentName": "Latha Kulkarni",
+      "parentPhone": "9400000094",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_BW6ht6qupY",
+      "rollNo": "095",
+      "name": "Myra Shetty",
+      "className": "10B",
+      "parentName": "Imran Shetty",
+      "parentPhone": "9400000095",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_5KUkdKSeb6",
+      "rollNo": "096",
+      "name": "Sara Rao",
+      "className": "10B",
+      "parentName": "Farah Rao",
+      "parentPhone": "9400000096",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_-HLztPmrU1",
+      "rollNo": "097",
+      "name": "Ira Reddy",
+      "className": "10B",
+      "parentName": "Shaila Reddy",
+      "parentPhone": "9400000097",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_YavTt0J9Sg",
+      "rollNo": "098",
+      "name": "Anaya Hegde",
+      "className": "10B",
+      "parentName": "Sameer Hegde",
+      "parentPhone": "9400000098",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_eguJ7OMokt",
+      "rollNo": "099",
+      "name": "Pari More",
+      "className": "10B",
+      "parentName": "Pooja More",
+      "parentPhone": "9400000099",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    },
+    {
+      "id": "stu_NrAKCBPTdv",
+      "rollNo": "100",
+      "name": "Kiara Patil",
+      "className": "10B",
+      "parentName": "Rajesh Patil",
+      "parentPhone": "9400000100",
+      "createdAt": "2026-07-17T09:03:16.194Z",
+      "updatedAt": "2026-07-17T09:03:16.194Z"
+    }
+  ],
+  "attendance": [
+    {
+      "id": "att_bq4QDBWHmC",
+      "studentId": "stu_8VH-4b77Dr",
+      "date": "2026-07-17",
+      "status": "present",
+      "createdAt": "2026-07-17T09:03:28.008Z",
+      "updatedAt": "2026-07-17T09:03:31.598Z"
+    },
+    {
+      "id": "att_ilmhGrCK0I",
+      "studentId": "stu_adhB8pLc6B",
+      "date": "2026-07-17",
+      "status": "present",
+      "createdAt": "2026-07-17T09:03:30.859Z",
+      "updatedAt": "2026-07-17T09:03:30.860Z"
+    },
+    {
+      "id": "att_iwx2GO01AT",
+      "studentId": "stu_o0nsG5Ari7",
+      "date": "2026-07-17",
+      "status": "absent",
+      "createdAt": "2026-07-17T10:15:12.210Z",
+      "updatedAt": "2026-07-17T10:15:12.210Z"
+    }
+  ],
   "smsQueue": [],
   "settings": {
     "schoolName": "Absent Alert",

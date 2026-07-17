@@ -26,6 +26,9 @@ export const api = {
   queueAbsentAlerts: (payload) => request('/attendance/queue-absent-alerts', { method: 'POST', body: JSON.stringify(payload) }),
   getClasses: () => request('/classes'),
   getGatewayStatus: () => request('/gateway/status'),
+  getWhatsAppStatus: () => request('/whatsapp/status'),
+  loginWithWhatsApp: () => request('/whatsapp/login', { method: 'POST' }),
+  queueAbsentWhatsAppAlerts: (payload) => request('/attendance/queue-absent-whatsapp-alerts', { method: 'POST', body: JSON.stringify(payload) }),
   getSmsQueue: () => request('/sms-queue'),
   retrySms: (id) => request(`/sms-queue/${id}/retry`, { method: 'POST' })
 };

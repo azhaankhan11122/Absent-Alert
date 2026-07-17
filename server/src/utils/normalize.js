@@ -13,11 +13,14 @@ export function normalizeStudent(input = {}) {
   return { rollNo, name, className, parentName, parentPhone };
 }
 
-export function renderTemplate(template, student, date) {
+export function renderTemplate(template, student, record = {}, date = todayISO()) {
   return template
     .replaceAll('{name}', student.name || '')
     .replaceAll('{rollNo}', student.rollNo || '')
     .replaceAll('{className}', student.className || '')
     .replaceAll('{date}', date || todayISO())
-    .replaceAll('{parentName}', student.parentName || '');
+    .replaceAll('{parentName}', student.parentName || '')
+    .replaceAll('{subjectName}', record.subjectName || '')
+    .replaceAll('{startTime}', record.startTime || '')
+    .replaceAll('{endTime}', record.endTime || '');
 }
