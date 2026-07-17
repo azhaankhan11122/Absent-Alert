@@ -1,0 +1,9 @@
+{
+  "students": [],
+  "attendance": [],
+  "smsQueue": [],
+  "settings": {
+    "schoolName": "Absent Alert",
+    "absentSmsTemplate": "Dear parent, {name} ({rollNo}) from class {className} is absent on {date}."
+  }
+}
