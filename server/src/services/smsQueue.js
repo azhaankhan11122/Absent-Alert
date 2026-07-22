@@ -34,12 +34,17 @@ export class SmsQueueService {
 
       const queued = [];
       for (const student of students) {
-        const existing = data.smsQueue.find((job) => job.studentId === student.id && job.date === date && ['queued', 'processing', 'sent'].includes(job.status));
-        if (existing) continue;
+        const phones = student.parentPhone.split(' / ');
         const record = data.attendance.find((row) => row.studentId === student.id && row.date === date) || {};
-        const job = this.createJob(student, renderTemplate(data.settings.absentSmsTemplate, student, record, date), date, 'sms');
-        data.smsQueue.push(job);
-        queued.push(job);
+        const message = renderTemplate(data.settings.absentSmsTemplate, student, record, date);
+        
+        for (const phone of phones) {
+          const existing = data.smsQueue.find((job) => job.studentId === student.id && job.phone === phone && job.date === date && ['queued', 'processing', 'sent'].includes(job.status));
+          if (existing) continue;
+          const job = this.createJob(student, message, date, 'sms', phone);
+          data.smsQueue.push(job);
+          queued.push(job);
+        }
       }
       return queued;
     });
@@ -56,22 +61,27 @@ export class SmsQueueService {
 
       const queued = [];
       for (const student of students) {
-        const existing = data.smsQueue.find((job) => job.studentId === student.id && job.date === date && ['queued', 'processing', 'sent'].includes(job.status) && job.provider === 'whatsapp');
-        if (existing) continue;
+        const phones = student.parentPhone.split(' / ');
         const record = data.attendance.find((row) => row.studentId === student.id && row.date === date) || {};
-        const job = this.createJob(student, renderTemplate(data.settings.absentWhatsAppTemplate, student, record, date), date, 'whatsapp');
-        data.smsQueue.push(job);
-        queued.push(job);
+        const message = renderTemplate(data.settings.absentWhatsAppTemplate, student, record, date);
+
+        for (const phone of phones) {
+          const existing = data.smsQueue.find((job) => job.studentId === student.id && job.phone === phone && job.date === date && ['queued', 'processing', 'sent'].includes(job.status) && job.provider === 'whatsapp');
+          if (existing) continue;
+          const job = this.createJob(student, message, date, 'whatsapp', phone);
+          data.smsQueue.push(job);
+          queued.push(job);
+        }
       }
       return queued;
     });
   }
 
-  createJob(student, message, date, provider) {
+  createJob(student, message, date, provider, phone) {
     return {
       id: newId('sms'),
       studentId: student.id,
-      phone: student.parentPhone,
+      phone: phone || student.parentPhone,
       message,
       date,
       provider,

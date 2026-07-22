@@ -1,7 +1,11 @@
 export const todayISO = () => new Date().toISOString().slice(0, 10);
 
 export function normalizePhone(value = '') {
-  return String(value).replace(/[^0-9+]/g, '').trim();
+  const parts = String(value).split(/[\/,;]/);
+  return parts
+    .map((p) => p.replace(/[^0-9+]/g, '').trim())
+    .filter(Boolean)
+    .join(' / ');
 }
 
 export function normalizeStudent(input = {}) {

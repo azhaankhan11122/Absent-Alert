@@ -1,12 +1,484 @@
 {
-  "students": [],
+  "students": [
+    {
+      "id": "stu_7YsTefgs1G",
+      "rollNo": "C08",
+      "name": "AYISHA RIFANA",
+      "className": "COM",
+      "parentName": "ARIF",
+      "parentPhone": "99028890529739418841",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_Gq2lsHUQLb",
+      "rollNo": "C35",
+      "name": "MOHAMMED NASIM",
+      "className": "COM",
+      "parentName": "NISAR",
+      "parentPhone": "90359264919901690586",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_Amrr0bOwHl",
+      "rollNo": "C09",
+      "name": "AYISHATHUL SHAFEERA",
+      "className": "COM",
+      "parentName": "REHMATH",
+      "parentPhone": "73533276389972637638",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_gxDREdOFtI",
+      "rollNo": "C20",
+      "name": "MOHAMMAD ISHAM",
+      "className": "COM",
+      "parentName": "MOHAMMAD ASHRAF",
+      "parentPhone": "9741852157",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_CU2N78n2Ue",
+      "rollNo": "C36",
+      "name": "MOHAMMED NISHAM",
+      "className": "COM",
+      "parentName": "ABDUL RAZAK",
+      "parentPhone": "99451081229141653176",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_7pHLYdnRW7",
+      "rollNo": "C19",
+      "name": "MAZIYA",
+      "className": "COM",
+      "parentName": "H F MANSOOR",
+      "parentPhone": "7411395269",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_IbOhT_Bg-J",
+      "rollNo": "C17",
+      "name": "KHATHEEJATHUL NUZAFA",
+      "className": "COM",
+      "parentName": "NIYAZ",
+      "parentPhone": "81232564229916153718",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_AHyTGraYk2",
+      "rollNo": "C52",
+      "name": "RAIHAAN ANWAR ALI",
+      "className": "COM",
+      "parentName": "JUNAID",
+      "parentPhone": "9880725060",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_s3h_2bJyBC",
+      "rollNo": "C23",
+      "name": "MOHAMMAD SAKIR",
+      "className": "COM",
+      "parentName": "A M ADAM",
+      "parentPhone": "7204294684",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_9lBNOudMWT",
+      "rollNo": "C11",
+      "name": "FATHIMA HAIFA",
+      "className": "COM",
+      "parentName": "YUSUF",
+      "parentPhone": "99643895999606258806",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_OcWcq8tfu-",
+      "rollNo": "C06",
+      "name": "ALEEMA ASHMIYA",
+      "className": "COM",
+      "parentName": "ARIS",
+      "parentPhone": "9632421449",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_6C67vWapau",
+      "rollNo": "C01",
+      "name": "ABDUL FAZIL",
+      "className": "COM",
+      "parentName": "MOHAMMAD ASHRAF",
+      "parentPhone": "80056984339071663313",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_CvyelYABY4",
+      "rollNo": "C46",
+      "name": "MOHAMMED ZIYAD",
+      "className": "COM",
+      "parentName": "ABDUL GAFOOR",
+      "parentPhone": "98868187089972258867",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_hUke32DIcn",
+      "rollNo": "C13",
+      "name": "FATHIMA KHAN",
+      "className": "COM",
+      "parentName": "SAMIR",
+      "parentPhone": "99027506199741475201",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_rKTEYt6TFD",
+      "rollNo": "C43",
+      "name": "MOHAMMED SHAHIL",
+      "className": "COM",
+      "parentName": "MOHAMMED IRFAN",
+      "parentPhone": "70225078438722235606",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_FhjeQ5eOCL",
+      "rollNo": "A14",
+      "name": "MUHAMMAD SWAIBU",
+      "className": "ARTS",
+      "parentName": "SAHUL HAMEED",
+      "parentPhone": "91645158336364566680",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_edmGZCyxlt",
+      "rollNo": "C56",
+      "name": "ZEENATH",
+      "className": "COM",
+      "parentName": "ZAKEER HUSSAIN",
+      "parentPhone": "7411226855916448002",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_ARKTFvjaQp",
+      "rollNo": "C26",
+      "name": "MOHAMMAD THAMEEZ",
+      "className": "COM",
+      "parentName": "KABEER",
+      "parentPhone": "88671409338867148510",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_r9mLA3J4lB",
+      "rollNo": "C40",
+      "name": "MOHAMMED RIZWAN",
+      "className": "COM",
+      "parentName": "ABDUL LATHEEF",
+      "parentPhone": "9972250432",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_uxpboaOz3w",
+      "rollNo": "C32",
+      "name": "MOHAMMED FIROZ",
+      "className": "COM",
+      "parentName": "FAYAZ",
+      "parentPhone": "9606359605",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_Z2sXaUpmuy",
+      "rollNo": "C55",
+      "name": "UMAR SHAMMAZ",
+      "className": "COM",
+      "parentName": "ABUBAKKAR SIDDIK",
+      "parentPhone": "98449512611",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_97631dZZ4j",
+      "rollNo": "C39",
+      "name": "MOHAMMED RIYAN",
+      "className": "COM",
+      "parentName": "RAFIQUE",
+      "parentPhone": "9880589432",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_Do5_43ArVh",
+      "rollNo": "C16",
+      "name": "KHATHIJATHUL NISHMA",
+      "className": "COM",
+      "parentName": "MOHAMMED MUSTHAFA",
+      "parentPhone": "96067897169036652421",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_Eb3je-vfMC",
+      "rollNo": "C04",
+      "name": "ABDUL RAHIMAN SUHAIL",
+      "className": "COM",
+      "parentName": "SARAFATH",
+      "parentPhone": "9611263689",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_FgvDhRjI0z",
+      "rollNo": "C51",
+      "name": "RAIFA ZULEKHA",
+      "className": "Com",
+      "parentName": "MOHAMMED FAROOQ",
+      "parentPhone": "7204678660",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_3dwGWDbsnj",
+      "rollNo": "A03",
+      "name": "IBRAHIM MOHAMMED HANEEM",
+      "className": "ARTS",
+      "parentName": "BADRUDDIN K",
+      "parentPhone": "9972988696",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_PSNE6FRJWQ",
+      "rollNo": "C02",
+      "name": "ABDUL KHADAR ZUNAIN",
+      "className": "COM",
+      "parentName": "IBRAHIM",
+      "parentPhone": "9449129073",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_AoP6pOjZ4O",
+      "rollNo": "C15",
+      "name": "FURKAN MOHAMAD ALTAF SIKANDAR",
+      "className": "COM",
+      "parentName": "MOHAMAD ALTAF SIKANDAR",
+      "parentPhone": "8197264409",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_AbUtkhV0kd",
+      "rollNo": "C05",
+      "name": "AHMED MUZAFIR",
+      "className": "COM",
+      "parentName": "MOOSA MUNNA",
+      "parentPhone": "7406163132",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_CoBZqBnRib",
+      "rollNo": "C45",
+      "name": "MOHAMMED THAFHEEM YOUSUF",
+      "className": "COM",
+      "parentName": "ABDUL HAMEED",
+      "parentPhone": "8548054018",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_d9jnozo1kB",
+      "rollNo": "C29",
+      "name": "MOHAMMED ASHIQ",
+      "className": "COM",
+      "parentName": "MOHAMMED ASIF",
+      "parentPhone": "8970333057",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_0ooozsy--g",
+      "rollNo": "C07",
+      "name": "ALIMA SAZIYA",
+      "className": "COM",
+      "parentName": "MOHAMMED ASHRAF",
+      "parentPhone": "9980523846",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_7i3o9TL6Sq",
+      "rollNo": "C31",
+      "name": "MOHAMMED FAIZ",
+      "className": "COM",
+      "parentName": "FIROZ",
+      "parentPhone": "9743984393",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_sMNnDsb3nN",
+      "rollNo": "C53",
+      "name": "SHEQ MOHAMMAD SHAHIZ",
+      "className": "COM",
+      "parentName": "SAHUL HAMEED",
+      "parentPhone": "9008676228",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_11KcioxAda",
+      "rollNo": "A16",
+      "name": "NAFISATUL MISRIYA SHYMA",
+      "className": "ARTS",
+      "parentName": "ISMAIL",
+      "parentPhone": "9008977402",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_0tbalptM3B",
+      "rollNo": "C21",
+      "name": "MOHAMMAD NISHAM",
+      "className": "COM",
+      "parentName": "AKBAR SHAREEF",
+      "parentPhone": "88676507188",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_17onfnBDJR",
+      "rollNo": "C03",
+      "name": "ABDUL RAHAMAN ANAF",
+      "className": "COM",
+      "parentName": "ALTHAF HUSSAIN K P",
+      "parentPhone": "9620150907",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_MVgAAE1V6U",
+      "rollNo": "A13",
+      "name": "MOHAMMED YASEEN FARIS",
+      "className": "ARTS",
+      "parentName": "K P HYDER",
+      "parentPhone": "8861770125",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_46rZUvj7oj",
+      "rollNo": "A09",
+      "name": "MOHAMMED NIHAF",
+      "className": "ARTS",
+      "parentName": "NIYAZ",
+      "parentPhone": "8762421593",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_SCnIqFtj8Y",
+      "rollNo": "C12",
+      "name": "FATHIMA HAIFA",
+      "className": "COM",
+      "parentName": "ASHRAF",
+      "parentPhone": "9611263348",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_iUyAgCcFBR",
+      "rollNo": "C42",
+      "name": "MOHAMMED SHAFIQ NAWAZ",
+      "className": "COM",
+      "parentName": "NAWAZ",
+      "parentPhone": "9986392732",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_tAE_xeaTBZ",
+      "rollNo": "C22",
+      "name": "MOHAMMAD SAKIBUL HASAN",
+      "className": "COM",
+      "parentName": "K ANIEF",
+      "parentPhone": "7349481871",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_bzN3iD5kT5",
+      "rollNo": "A02",
+      "name": "AYISHATH SAFA",
+      "className": "ARTS",
+      "parentName": "IQBAL",
+      "parentPhone": "8904866816",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    },
+    {
+      "id": "stu_t0CKxt_d6q",
+      "rollNo": "C24",
+      "name": "MOHAMMED SHANUF",
+      "className": "COM",
+      "parentName": "ILYAS",
+      "parentPhone": "9663145724",
+      "createdAt": "2026-07-22T09:36:28.869Z",
+      "updatedAt": "2026-07-22T09:36:28.869Z"
+    }
+  ],
   "attendance": [],
-  "smsQueue": [],
+  "smsQueue": [
+    {
+      "id": "sms_PsmvzuNLLl",
+      "studentId": "stu_L3HQ9lI2jH",
+      "phone": "9606789716",
+      "message": "Test Student MultiPhone has missed Test Math from 09:00 to 10:00",
+      "date": "2026-07-22",
+      "provider": "whatsapp",
+      "status": "processing",
+      "attempts": 1,
+      "maxAttempts": 5,
+      "createdAt": "2026-07-22T09:40:34.582Z",
+      "updatedAt": "2026-07-22T09:40:35.285Z",
+      "lastError": null,
+      "providerResponse": null
+    },
+    {
+      "id": "sms_tDM_FYuB3j",
+      "studentId": "stu_L3HQ9lI2jH",
+      "phone": "9036652421",
+      "message": "Test Student MultiPhone has missed Test Math from 09:00 to 10:00",
+      "date": "2026-07-22",
+      "provider": "whatsapp",
+      "status": "processing",
+      "attempts": 1,
+      "maxAttempts": 5,
+      "createdAt": "2026-07-22T09:40:34.582Z",
+      "updatedAt": "2026-07-22T09:40:35.847Z",
+      "lastError": null,
+      "providerResponse": null
+    }
+  ],
   "settings": {
     "schoolName": "Absent Alert",
     "absentSmsTemplate": "Dear parent, {name} ({rollNo}) from class {className} is absent on {date}.",
     "absentWhatsAppTemplate": "{name} has missed {subjectName} from {startTime} to {endTime}",
-    "whatsAppAuthenticated": true,
+    "whatsAppAuthenticated": false,
     "whatsAppPhoneNumberId": "your_whatsapp_phone_number_id_here"
   }
 }

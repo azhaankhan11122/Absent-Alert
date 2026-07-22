@@ -29,11 +29,40 @@ export function metaRouter(store, gateway, smsQueue, whatsappGateway) {
     try {
       await whatsappGateway.validateConfig();
       const data = await store.read();
+      
+      let connected = Boolean(data.settings.whatsAppAuthenticated);
+      let qr = null;
+      let isLocal = false;
+
+      if (whatsappGateway.config.whatsAppApiUrl && whatsappGateway.config.whatsAppApiUrl.includes('localhost')) {
+        isLocal = true;
+        try {
+          const statusUrl = whatsappGateway.config.whatsAppApiUrl.replace(/\/send-alert\/?$/, '/status');
+          const response = await fetch(statusUrl);
+          if (response.ok) {
+            const body = await response.json();
+            connected = body.status === 'ready';
+            qr = body.qr || null;
+            
+            if (data.settings.whatsAppAuthenticated !== connected) {
+              await store.update((state) => {
+                state.settings.whatsAppAuthenticated = connected;
+                return state.settings;
+              });
+            }
+          }
+        } catch (err) {
+          console.error('Failed to fetch status from local WhatsApp gateway:', err.message);
+          connected = false;
+        }
+      }
+
       res.json({
         ok: true,
-        provider: 'whatsapp',
-        connected: Boolean(data.settings.whatsAppAuthenticated),
+        provider: isLocal ? 'whatsapp-web' : 'whatsapp',
+        connected,
         configured: true,
+        qr,
         phoneNumberId: whatsappGateway.config.whatsAppPhoneNumberId || ''
       });
     } catch (error) {
@@ -51,10 +80,43 @@ export function metaRouter(store, gateway, smsQueue, whatsappGateway) {
   router.post('/whatsapp/login', async (_req, res) => {
     try {
       await whatsappGateway.validateConfig();
-      const settings = await store.update((data) => {
-        data.settings.whatsAppAuthenticated = true;
-        data.settings.whatsAppPhoneNumberId = whatsappGateway.config.whatsAppPhoneNumberId || data.settings.whatsAppPhoneNumberId || '';
-        return data.settings;
+      const data = await store.read();
+      let connected = false;
+      let qr = null;
+      let isLocal = false;
+
+      if (whatsappGateway.config.whatsAppApiUrl && whatsappGateway.config.whatsAppApiUrl.includes('localhost')) {
+        isLocal = true;
+        try {
+          const statusUrl = whatsappGateway.config.whatsAppApiUrl.replace(/\/send-alert\/?$/, '/status');
+          const response = await fetch(statusUrl);
+          if (response.ok) {
+            const body = await response.json();
+            connected = body.status === 'ready';
+            qr = body.qr || null;
+          }
+        } catch (err) {
+          console.error('Failed to fetch status from local WhatsApp gateway:', err.message);
+        }
+      }
+
+      if (isLocal) {
+        await store.update((state) => {
+          state.settings.whatsAppAuthenticated = connected;
+          return state.settings;
+        });
+        return res.json({
+          connected,
+          configured: true,
+          qr,
+          provider: 'whatsapp-web'
+        });
+      }
+
+      const settings = await store.update((state) => {
+        state.settings.whatsAppAuthenticated = true;
+        state.settings.whatsAppPhoneNumberId = whatsappGateway.config.whatsAppPhoneNumberId || state.settings.whatsAppPhoneNumberId || '';
+        return state.settings;
       });
       res.json({
         connected: true,

@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
+const QRCode = require('qrcode');
 const dotenv = require('dotenv');
 
 const os = require('os');
@@ -20,7 +21,7 @@ app.use(bodyParser.json());
 console.log('Initializing WhatsApp Web Client...');
 
 const puppeteerConfig = {
-    headless: false,
+    headless: process.env.PUPPETEER_HEADLESS !== 'false',
     protocolTimeout: 300000,
     args: [
         '--no-sandbox',
@@ -51,26 +52,35 @@ const client = new Client({
 });
 
 let isClientReady = false;
+let latestQrCode = null;
 
 // QR Code Generation event
-client.on('qr', (qr) => {
+client.on('qr', async (qr) => {
     console.log('\n--- SCAN THIS QR CODE WITH WHATSAPP ON YOUR PHONE ---');
     qrcode.generate(qr, { small: true });
     console.log('-----------------------------------------------------\n');
+    try {
+        latestQrCode = await QRCode.toDataURL(qr);
+    } catch (err) {
+        console.error('Failed to generate base64 QR code image:', err);
+    }
 });
 
 // Client Authentication and Ready events
 client.on('ready', () => {
     isClientReady = true;
+    latestQrCode = null;
     console.log('WhatsApp Client is fully authenticated and ready!');
 });
 
 client.on('auth_failure', (msg) => {
     console.error('WhatsApp Authentication Failure:', msg);
+    latestQrCode = null;
 });
 
 client.on('disconnected', (reason) => {
     isClientReady = false;
+    latestQrCode = null;
     console.log('WhatsApp Client disconnected. Reason:', reason);
 });
 
@@ -193,7 +203,15 @@ function verifyApiKey(req, res, next) {
 
 // API Routes
 app.post('/send-alert', verifyApiKey, async (req, res) => {
-    const { phoneNumber, message } = req.body;
+    let { phoneNumber, message } = req.body;
+
+    // Handle Meta-style payload formats sent by whatsappGateway.js
+    if (!phoneNumber && req.body.to) {
+        phoneNumber = req.body.to;
+    }
+    if (!message && req.body.text && req.body.text.body) {
+        message = req.body.text.body;
+    }
 
     if (!phoneNumber || !message) {
         return res.status(400).json({ error: 'Missing required parameters: phoneNumber and message.' });
@@ -221,6 +239,7 @@ app.post('/send-alert', verifyApiKey, async (req, res) => {
 app.get('/status', (req, res) => {
     res.json({
         status: isClientReady ? 'ready' : 'not_ready',
+        qr: latestQrCode,
         queueLength: messageQueue.length,
         isProcessing: isProcessingQueue
     });

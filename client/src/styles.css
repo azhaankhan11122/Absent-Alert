@@ -48,3 +48,113 @@ button.ghost { background: #eef3fb; color: #1f3864; } button.danger, .danger { b
 .badge { display: inline-flex; width: fit-content; padding: 5px 9px; border-radius: 999px; font-weight: 900; text-transform: uppercase; font-size: 11px; background: #dce6f7; }
 .badge.sent { background: #c9f7dc; color: #0e6b38; } .badge.failed { background: #ffd9d9; color: #a10f18; } .badge.processing { background: #fff1c2; color: #7a5200; }
 @media (max-width: 900px) { .hero, .panel-title { align-items: flex-start; flex-direction: column; } .stats { grid-template-columns: repeat(2, 1fr); } .grid2 { grid-template-columns: 1fr; } }
+
+/* QR Code Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(23, 32, 51, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  width: min(440px, 90vw);
+  box-shadow: 0 24px 60px rgba(21, 32, 76, 0.2);
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #172033;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.modal-content p {
+  color: #67768d;
+  font-size: 14px;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.qr-container {
+  background: #f8fbff;
+  border: 1px solid #dce6f7;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 232px;
+  height: 232px;
+  box-shadow: inset 0 2px 8px rgba(27, 61, 102, 0.05);
+}
+
+.qr-image {
+  width: 200px;
+  height: 200px;
+  display: block;
+}
+
+.modal-close-btn {
+  background: #edf3fc;
+  color: #405172;
+  border: 0;
+  width: 100%;
+  padding: 12px;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-close-btn:hover {
+  background: #e4ebf7;
+  color: #1f6feb;
+}
+
+.qr-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #4c5d78;
+  font-size: 14px;
+}
+
+.qr-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #edf3fc;
+  border-top-color: #1f6feb;
+  border-radius: 50%;
+  animation: qrSpinner 0.8s linear infinite;
+}
+
+@keyframes qrSpinner {
+  to { transform: rotate(360deg); }
+}
+

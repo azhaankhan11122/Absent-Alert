@@ -20,7 +20,9 @@ function App() {
   const [trends, setTrends] = useState([]);
   const [queue, setQueue] = useState([]);
   const [gateway, setGateway] = useState({ ok: false, devices: [] });
-  const [whatsApp, setWhatsApp] = useState({ connected: false, configured: false, phoneNumberId: '' });
+  const [whatsApp, setWhatsApp] = useState({ connected: false, configured: false, phoneNumberId: '', qr: null });
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState(null);
   const [absentDetails, setAbsentDetails] = useState({ subjectName: '', startTime: '', endTime: '' });
   const [filters, setFilters] = useState({ q: '', className: '', date: today });
   const [form, setForm] = useState(emptyForm);
@@ -58,6 +60,26 @@ function App() {
     }, 7000);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    if (!showLoginModal) return;
+    const pollId = setInterval(async () => {
+      try {
+        const status = await api.getWhatsAppStatus();
+        setWhatsApp(status);
+        if (status.connected) {
+          setShowLoginModal(false);
+          setQrCodeUrl(null);
+          setToast('WhatsApp connected successfully!');
+        } else if (status.qr) {
+          setQrCodeUrl(status.qr);
+        }
+      } catch (err) {
+        console.error('Error polling WhatsApp status:', err);
+      }
+    }, 3000);
+    return () => clearInterval(pollId);
+  }, [showLoginModal]);
 
   const attendanceByStudent = useMemo(() => Object.fromEntries(attendance.map((row) => [row.student.id, row.status])), [attendance]);
 
@@ -104,7 +126,14 @@ function App() {
     try {
       const result = await api.loginWithWhatsApp();
       setWhatsApp(result);
-      setToast('WhatsApp login completed.');
+      if (result.qr) {
+        setQrCodeUrl(result.qr);
+        setShowLoginModal(true);
+      } else if (result.connected) {
+        setToast('WhatsApp connected successfully.');
+      } else {
+        setToast('WhatsApp login request received.');
+      }
     } catch (error) {
       setToast(error.message);
     }
@@ -206,6 +235,30 @@ function App() {
           {queue.map((job) => <div className="tr" key={job.id}><span className={`badge ${job.status}`}>{job.status}</span><span>{job.phone}</span><span>{job.message}</span><span>{job.attempts}/{job.maxAttempts}</span><span>{job.lastError || job.sentAt || '-'} {job.status === 'failed' && <button onClick={async () => { await api.retrySms(job.id); await loadAll(); }}>Retry</button>}</span></div>)}
         </div>
       </section>}
+
+      {showLoginModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Link WhatsApp</h3>
+            <p>Scan this QR code using WhatsApp on your phone (Linked Devices &gt; Link a Device) to link this session.</p>
+            
+            <div className="qr-container">
+              {qrCodeUrl ? (
+                <img src={qrCodeUrl} alt="WhatsApp QR Code" className="qr-image" />
+              ) : (
+                <div className="qr-loading">
+                  <div className="qr-spinner"></div>
+                  <span>Generating QR Code...</span>
+                </div>
+              )}
+            </div>
+            
+            <button className="modal-close-btn" onClick={() => { setShowLoginModal(false); setQrCodeUrl(null); }}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
