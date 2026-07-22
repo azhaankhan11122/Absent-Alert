@@ -33,5 +33,8 @@ export const api = {
   retrySms: (id) => request(`/sms-queue/${id}/retry`, { method: 'POST' }),
   clearAllData: () => request('/students/clear', { method: 'POST' }),
   getSettings: () => request('/settings'),
-  updateSettings: (payload) => request('/settings', { method: 'PUT', body: JSON.stringify(payload) })
+  updateSettings: (payload) => request('/settings', { method: 'PUT', body: JSON.stringify(payload) }),
+  getTimetable: () => request('/timetable'),
+  createTimetable: (payload) => request('/timetable', { method: 'POST', body: JSON.stringify(payload) }),
+  deleteTimetable: (id) => request(`/timetable/${id}`, { method: 'DELETE' })
 };

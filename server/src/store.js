@@ -6,6 +6,7 @@ const DEFAULT_DATA = {
   students: [],
   attendance: [],
   smsQueue: [],
+  timetable: [],
   settings: {
     schoolName: 'Absent Alert',
     absentSmsTemplate: 'Dear parent, {name} ({rollNo}) from class {className} is absent on {date}.',

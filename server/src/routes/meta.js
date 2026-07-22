@@ -1,4 +1,5 @@
 import express from 'express';
+import { newId } from '../store.js';
 
 const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -140,6 +141,55 @@ export function metaRouter(store, gateway, smsQueue, whatsappGateway) {
     const job = await smsQueue.retry(req.params.id);
     if (!job) return res.status(404).json({ error: 'SMS job not found.' });
     res.json(job);
+  }));
+
+  router.get('/timetable', asyncHandler(async (_req, res) => {
+    const data = await store.read();
+    const list = data.timetable || [];
+    const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const sorted = list.slice().sort((a, b) => {
+      const dayDiff = dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day);
+      if (dayDiff !== 0) return dayDiff;
+      return String(a.startTime).localeCompare(b.startTime);
+    });
+    res.json(sorted);
+  }));
+
+  router.post('/timetable', asyncHandler(async (req, res) => {
+    const { day, subjectName, startTime, endTime, className, year } = req.body;
+    if (!day || !subjectName || !startTime || !endTime || !className || !year) {
+      return res.status(400).json({ error: 'day, subjectName, startTime, endTime, className, and year are required.' });
+    }
+    const created = await store.update((data) => {
+      if (!data.timetable) data.timetable = [];
+      const row = {
+        id: newId('tt'),
+        day,
+        subjectName: String(subjectName).trim(),
+        startTime: String(startTime).trim(),
+        endTime: String(endTime).trim(),
+        className: String(className).trim(),
+        year: String(year).trim(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      data.timetable.push(row);
+      return row;
+    });
+    res.status(201).json(created);
+  }));
+
+  router.delete('/timetable/:id', asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    const deleted = await store.update((data) => {
+      if (!data.timetable) return null;
+      const index = data.timetable.findIndex((item) => item.id === id);
+      if (index === -1) return null;
+      const [removed] = data.timetable.splice(index, 1);
+      return removed;
+    });
+    if (!deleted) return res.status(404).json({ error: 'Timetable slot not found.' });
+    res.status(204).end();
   }));
 
   return router;
