@@ -29,7 +29,7 @@ export class SmsQueueService {
         if (studentIds.length && !studentIds.includes(student.id)) return false;
         if (className && student.className !== className) return false;
         const record = data.attendance.find((row) => row.studentId === student.id && row.date === date);
-        return record?.status === 'absent' && student.parentPhone;
+        return record?.status === 'absent' && student.parentPhone && !student.shariyath;
       });
 
       const queued = [];
@@ -56,7 +56,7 @@ export class SmsQueueService {
         if (studentIds.length && !studentIds.includes(student.id)) return false;
         if (className && student.className !== className) return false;
         const record = data.attendance.find((row) => row.studentId === student.id && row.date === date);
-        return record?.status === 'absent' && student.parentPhone;
+        return record?.status === 'absent' && student.parentPhone && !student.shariyath;
       });
 
       const queued = [];

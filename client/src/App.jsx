@@ -5,7 +5,7 @@ import { api } from './api/client';
 import TrendChart from './components/TrendChart';
 import './styles.css';
 
-const emptyForm = { name: '', rollNo: '', className: '', parentName: '', parentPhone: '' };
+const emptyForm = { name: '', rollNo: '', className: '', parentName: '', parentPhone: '', shariyath: false };
 const today = new Date().toISOString().slice(0, 10);
 
 function Stat({ label, value, icon }) {
@@ -201,7 +201,7 @@ function App() {
         <div className="table">
           <div className="tr head"><span>Roll</span><span>Name</span><span>Class</span><span>Parent Phone</span><span>Status</span></div>
           {attendance.map(({ student, status }) => <div className="tr" key={student.id}>
-            <span>{student.rollNo}</span><span>{student.name}</span><span>{student.className}</span><span>{student.parentPhone}</span>
+            <span>{student.rollNo}</span><span>{student.name} {student.shariyath && <span style={{ color: '#d9383a', fontSize: '11px', fontWeight: 'bold', marginLeft: '4px' }}>(Shariyath)</span>}</span><span>{student.className}</span><span>{student.parentPhone}</span>
             <span className="actions">{['present', 'absent', 'late'].map((s) => <button key={s} className={status === s ? `active ${s}` : ''} onClick={() => mark(student.id, s)}>{s}</button>)}</span>
           </div>)}
         </div>
@@ -210,7 +210,11 @@ function App() {
       {view === 'students' && <section className="grid2">
         <form className="panel form" onSubmit={saveStudent}>
           <div className="panel-title"><h2>{editingId ? 'Edit Student' : 'Add Student'}</h2><label className="upload"><Upload size={16} /> Import CSV/XLSX<input type="file" accept=".csv,.xlsx" onChange={importFile} hidden /></label></div>
-          {Object.keys(emptyForm).map((key) => <input key={key} required={['name', 'rollNo', 'className', 'parentPhone'].includes(key)} placeholder={key} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />)}
+          {Object.keys(emptyForm).filter((key) => key !== 'shariyath').map((key) => <input key={key} required={['name', 'rollNo', 'className', 'parentPhone'].includes(key)} placeholder={key} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />)}
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', margin: '4px 0 8px' }}>
+            <input type="checkbox" checked={Boolean(form.shariyath)} onChange={(e) => setForm({ ...form, shariyath: e.target.checked })} />
+            <span style={{ fontSize: '14px', color: '#405172', fontWeight: '500' }}>Shariyath student (exclude from alerts)</span>
+          </label>
           <button type="submit">{editingId ? 'Update student' : 'Add student'}</button>
         </form>
         <div className="panel">
@@ -225,7 +229,7 @@ function App() {
               )}
             </div>
           </div>
-          <div className="cards">{students.map((student) => <article className="card" key={student.id}><b>{student.name}</b><small>{student.className} • Roll {student.rollNo}</small><small>{student.parentName || 'Parent'}: {student.parentPhone}</small><div><button onClick={() => { setEditingId(student.id); setForm(student); }}>Edit</button><button className="danger ghost" onClick={async () => { await api.deleteStudent(student.id); await loadAll(); }}>Delete</button></div></article>)}</div>
+          <div className="cards">{students.map((student) => <article className="card" key={student.id}><b>{student.name} {student.shariyath && <span style={{ marginLeft: '8px', padding: '2px 6px', fontSize: '10px', backgroundColor: '#ffe9e9', color: '#d9383a', border: '1px solid #ffccd0', borderRadius: '6px' }}>Shariyath</span>}</b><small>{student.className} • Roll {student.rollNo}</small><small>{student.parentName || 'Parent'}: {student.parentPhone}</small><div><button onClick={() => { setEditingId(student.id); setForm({ ...emptyForm, ...student }); }}>Edit</button><button className="danger ghost" onClick={async () => { await api.deleteStudent(student.id); await loadAll(); }}>Delete</button></div></article>)}</div>
         </div>
       </section>}
 

@@ -14,7 +14,9 @@ export function normalizeStudent(input = {}) {
   const className = String(input.className ?? input.class ?? input['Class'] ?? input.section ?? '').trim();
   const parentName = String(input.parentName ?? input['Parent Name'] ?? input.guardianName ?? '').trim();
   const parentPhone = normalizePhone(input.parentPhone ?? input.phone ?? input.mobile ?? input['Parent Phone'] ?? input['Mobile'] ?? '');
-  return { rollNo, name, className, parentName, parentPhone };
+  const shariyathVal = String(input.shariyath ?? input.Shariyath ?? input.isShariyath ?? input['Is Shariyath'] ?? '').trim().toLowerCase();
+  const shariyath = typeof input.shariyath === 'boolean' ? input.shariyath : ['true', 'yes', 'y', '1'].includes(shariyathVal);
+  return { rollNo, name, className, parentName, parentPhone, shariyath };
 }
 
 export function renderTemplate(template, student, record = {}, date = todayISO()) {
