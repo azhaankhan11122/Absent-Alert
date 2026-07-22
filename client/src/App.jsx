@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AlertTriangle, CheckCircle2, Clock, MessageSquare, RefreshCw, Search, Upload, Users } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Clock, MessageSquare, RefreshCw, Search, Upload, Users, Settings } from 'lucide-react';
 import { api } from './api/client';
 import TrendChart from './components/TrendChart';
 import './styles.css';
 
-const emptyForm = { name: '', rollNo: '', className: '', parentName: '', parentPhone: '', shariyath: false };
+const emptyForm = { name: '', rollNo: '', className: '', year: '1st', parentName: '', parentPhone: '', shariyath: false };
 const today = new Date().toISOString().slice(0, 10);
 
 function Stat({ label, value, icon }) {
@@ -24,22 +24,28 @@ function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState(null);
   const [absentDetails, setAbsentDetails] = useState({ subjectName: '', startTime: '', endTime: '' });
-  const [filters, setFilters] = useState({ q: '', className: '', date: today });
+  const [filters, setFilters] = useState({ q: '', className: '', date: today, year: '' });
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [view, setView] = useState('attendance');
   const [toast, setToast] = useState('');
 
+  // Settings states
+  const [schoolName, setSchoolName] = useState('');
+  const [absentSmsTemplate, setAbsentSmsTemplate] = useState('');
+  const [absentWhatsAppTemplate, setAbsentWhatsAppTemplate] = useState('');
+
   const loadAll = async () => {
-    const [studentsData, classesData, attendanceData, summaryData, trendsData, queueData, gatewayData, whatsAppData] = await Promise.all([
-      api.getStudents({ q: filters.q, className: filters.className }),
+    const [studentsData, classesData, attendanceData, summaryData, trendsData, queueData, gatewayData, whatsAppData, settingsData] = await Promise.all([
+      api.getStudents({ q: filters.q, className: filters.className, year: filters.year }),
       api.getClasses(),
-      api.getAttendance({ date: filters.date, className: filters.className }),
-      api.getSummary({ date: filters.date, className: filters.className }),
-      api.getTrends({ className: filters.className, days: 14 }),
+      api.getAttendance({ date: filters.date, className: filters.className, year: filters.year }),
+      api.getSummary({ date: filters.date, className: filters.className, year: filters.year }),
+      api.getTrends({ className: filters.className, year: filters.year, days: 14 }),
       api.getSmsQueue(),
       api.getGatewayStatus(),
-      api.getWhatsAppStatus()
+      api.getWhatsAppStatus(),
+      api.getSettings().catch(() => ({}))
     ]);
     setStudents(studentsData);
     setClasses(classesData);
@@ -49,9 +55,27 @@ function App() {
     setQueue(queueData);
     setGateway(gatewayData);
     setWhatsApp(whatsAppData);
+    if (settingsData) {
+      setSchoolName(settingsData.schoolName || '');
+      setAbsentSmsTemplate(settingsData.absentSmsTemplate || '');
+      setAbsentWhatsAppTemplate(settingsData.absentWhatsAppTemplate || '');
+    }
   };
 
-  useEffect(() => { loadAll().catch((error) => setToast(error.message)); }, [filters.q, filters.className, filters.date]);
+  async function saveSettings(event) {
+    event.preventDefault();
+    try {
+      const result = await api.updateSettings({ schoolName, absentSmsTemplate, absentWhatsAppTemplate });
+      setSchoolName(result.schoolName || '');
+      setAbsentSmsTemplate(result.absentSmsTemplate || '');
+      setAbsentWhatsAppTemplate(result.absentWhatsAppTemplate || '');
+      setToast('Settings saved successfully.');
+    } catch (error) {
+      setToast(error.message);
+    }
+  }
+
+  useEffect(() => { loadAll().catch((error) => setToast(error.message)); }, [filters.q, filters.className, filters.date, filters.year]);
   useEffect(() => {
     const id = setInterval(() => {
       api.getSmsQueue().then(setQueue).catch(() => {});
@@ -93,14 +117,18 @@ function App() {
   }
 
   async function mark(studentId, status) {
-    const payload = { studentId, status, date: filters.date };
-    if (status === 'absent') {
-      payload.subjectName = absentDetails.subjectName;
-      payload.startTime = absentDetails.startTime;
-      payload.endTime = absentDetails.endTime;
+    try {
+      const payload = { studentId, status, date: filters.date };
+      if (status === 'absent') {
+        payload.subjectName = absentDetails.subjectName;
+        payload.startTime = absentDetails.startTime;
+        payload.endTime = absentDetails.endTime;
+      }
+      await api.markAttendance(payload);
+      await loadAll();
+    } catch (error) {
+      setToast(error.message);
     }
-    await api.markAttendance(payload);
-    await loadAll();
   }
 
   async function importFile(event) {
@@ -117,9 +145,13 @@ function App() {
   }
 
   async function queueAlerts() {
-    const result = await api.queueAbsentWhatsAppAlerts({ date: filters.date, className: filters.className });
-    setToast(`${result.queuedCount} WhatsApp alert(s) queued.`);
-    await loadAll();
+    try {
+      const result = await api.queueAbsentWhatsAppAlerts({ date: filters.date, className: filters.className, year: filters.year });
+      setToast(`${result.queuedCount} WhatsApp alert(s) queued.`);
+      await loadAll();
+    } catch (error) {
+      setToast(error.message);
+    }
   }
 
   async function loginWhatsApp() {
@@ -169,10 +201,20 @@ function App() {
       <section className="toolbar">
         <label className="search"><Search size={18} /><input placeholder="Search by name, roll no, parent, phone" value={filters.q} onChange={(e) => setFilters({ ...filters, q: e.target.value })} /></label>
         <select value={filters.className} onChange={(e) => setFilters({ ...filters, className: e.target.value })}><option value="">All classes</option>{classes.map((c) => <option key={c}>{c}</option>)}</select>
+        <select value={filters.year} onChange={(e) => setFilters({ ...filters, year: e.target.value })}>
+          <option value="">All years</option>
+          <option value="1st">1st Year</option>
+          <option value="2nd">2nd Year</option>
+        </select>
         <input type="date" value={filters.date} onChange={(e) => setFilters({ ...filters, date: e.target.value })} />
         <button className={whatsApp.connected ? 'ghost' : ''} onClick={loginWhatsApp}>{whatsApp.connected ? 'WhatsApp connected' : 'Login with WhatsApp'}</button>
         <span className={`whatsapp-badge ${whatsApp.connected ? 'ok' : 'bad'}`}>{whatsApp.connected ? 'WhatsApp ready' : (whatsApp.configured ? 'Not connected' : 'Configure WhatsApp')}</span>
-        <div className="segmented"><button className={view === 'attendance' ? 'active' : ''} onClick={() => setView('attendance')}>Attendance</button><button className={view === 'students' ? 'active' : ''} onClick={() => setView('students')}>Students</button><button className={view === 'sms' ? 'active' : ''} onClick={() => setView('sms')}>SMS Queue</button></div>
+        <div className="segmented">
+          <button className={view === 'attendance' ? 'active' : ''} onClick={() => setView('attendance')}>Attendance</button>
+          <button className={view === 'students' ? 'active' : ''} onClick={() => setView('students')}>Students</button>
+          <button className={view === 'sms' ? 'active' : ''} onClick={() => setView('sms')}>SMS Queue</button>
+          <button className={view === 'settings' ? 'active' : ''} onClick={() => setView('settings')} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Settings size={14} /> Settings</button>
+        </div>
       </section>
 
       {toast && <div className="toast" onClick={() => setToast('')}>{toast}</div>}
@@ -182,7 +224,6 @@ function App() {
         <Stat label="Present" value={summary.present} icon={<CheckCircle2 />} />
         <Stat label="Absent" value={summary.absent} icon={<AlertTriangle />} />
         <Stat label="Late" value={summary.late} icon={<Clock />} />
-        <Stat label="Unmarked" value={summary.unmarked} icon={<RefreshCw />} />
       </section>
 
       <section className="panel">
@@ -199,9 +240,9 @@ function App() {
           <p className="hint">When you mark a student absent, this info will be included in WhatsApp notifications.</p>
         </div>
         <div className="table">
-          <div className="tr head"><span>Roll</span><span>Name</span><span>Class</span><span>Parent Phone</span><span>Status</span></div>
+          <div className="tr head"><span>Roll</span><span>Name</span><span>Class/Year</span><span>Parent Phone</span><span>Status</span></div>
           {attendance.map(({ student, status }) => <div className="tr" key={student.id}>
-            <span>{student.rollNo}</span><span>{student.name} {student.shariyath && <span style={{ color: '#d9383a', fontSize: '11px', fontWeight: 'bold', marginLeft: '4px' }}>(Shariyath)</span>}</span><span>{student.className}</span><span>{student.parentPhone}</span>
+            <span>{student.rollNo}</span><span>{student.name} {student.shariyath && <span style={{ color: '#d9383a', fontSize: '11px', fontWeight: 'bold', marginLeft: '4px' }}>(Shariyath)</span>}</span><span>{student.className} ({student.year})</span><span>{student.parentPhone}</span>
             <span className="actions">{['present', 'absent', 'late'].map((s) => <button key={s} className={status === s ? `active ${s}` : ''} onClick={() => mark(student.id, s)}>{s}</button>)}</span>
           </div>)}
         </div>
@@ -210,7 +251,11 @@ function App() {
       {view === 'students' && <section className="grid2">
         <form className="panel form" onSubmit={saveStudent}>
           <div className="panel-title"><h2>{editingId ? 'Edit Student' : 'Add Student'}</h2><label className="upload"><Upload size={16} /> Import CSV/XLSX<input type="file" accept=".csv,.xlsx" onChange={importFile} hidden /></label></div>
-          {Object.keys(emptyForm).filter((key) => key !== 'shariyath').map((key) => <input key={key} required={['name', 'rollNo', 'className', 'parentPhone'].includes(key)} placeholder={key} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />)}
+          {Object.keys(emptyForm).filter((key) => key !== 'shariyath' && key !== 'year').map((key) => <input key={key} required={['name', 'rollNo', 'className', 'parentPhone'].includes(key)} placeholder={key} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />)}
+          <select value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value })}>
+            <option value="1st">1st Year</option>
+            <option value="2nd">2nd Year</option>
+          </select>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', margin: '4px 0 8px' }}>
             <input type="checkbox" checked={Boolean(form.shariyath)} onChange={(e) => setForm({ ...form, shariyath: e.target.checked })} />
             <span style={{ fontSize: '14px', color: '#405172', fontWeight: '500' }}>Shariyath student (exclude from alerts)</span>
@@ -229,7 +274,7 @@ function App() {
               )}
             </div>
           </div>
-          <div className="cards">{students.map((student) => <article className="card" key={student.id}><b>{student.name} {student.shariyath && <span style={{ marginLeft: '8px', padding: '2px 6px', fontSize: '10px', backgroundColor: '#ffe9e9', color: '#d9383a', border: '1px solid #ffccd0', borderRadius: '6px' }}>Shariyath</span>}</b><small>{student.className} • Roll {student.rollNo}</small><small>{student.parentName || 'Parent'}: {student.parentPhone}</small><div><button onClick={() => { setEditingId(student.id); setForm({ ...emptyForm, ...student }); }}>Edit</button><button className="danger ghost" onClick={async () => { await api.deleteStudent(student.id); await loadAll(); }}>Delete</button></div></article>)}</div>
+          <div className="cards">{students.map((student) => <article className="card" key={student.id}><b>{student.name} {student.shariyath && <span style={{ marginLeft: '8px', padding: '2px 6px', fontSize: '10px', backgroundColor: '#ffe9e9', color: '#d9383a', border: '1px solid #ffccd0', borderRadius: '6px' }}>Shariyath</span>}</b><small>{student.className} • {student.year} Year • Roll {student.rollNo}</small><small>{student.parentName || 'Parent'}: {student.parentPhone}</small><div><button onClick={() => { setEditingId(student.id); setForm({ ...emptyForm, ...student }); }}>Edit</button><button className="danger ghost" onClick={async () => { await api.deleteStudent(student.id); await loadAll(); }}>Delete</button></div></article>)}</div>
         </div>
       </section>}
 
@@ -238,6 +283,48 @@ function App() {
         <div className="table sms"><div className="tr head"><span>Status</span><span>Phone</span><span>Message</span><span>Attempts</span><span>Error</span></div>
           {queue.map((job) => <div className="tr" key={job.id}><span className={`badge ${job.status}`}>{job.status}</span><span>{job.phone}</span><span>{job.message}</span><span>{job.attempts}/{job.maxAttempts}</span><span>{job.lastError || job.sentAt || '-'} {job.status === 'failed' && <button onClick={async () => { await api.retrySms(job.id); await loadAll(); }}>Retry</button>}</span></div>)}
         </div>
+      </section>}
+
+      {view === 'settings' && <section className="panel" style={{ maxWidth: '600px', margin: '0 auto' }}>
+        <div className="panel-title"><h2>Customise Message Templates</h2></div>
+        <form onSubmit={saveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <strong>School / College Name</strong>
+            <input value={schoolName} onChange={(e) => setSchoolName(e.target.value)} placeholder="Badria PU College" required style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+          </label>
+          
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <strong>WhatsApp Message Template</strong>
+            <textarea 
+              value={absentWhatsAppTemplate} 
+              onChange={(e) => setAbsentWhatsAppTemplate(e.target.value)} 
+              placeholder="Dear Parent, [student_name], was absent on [date] ([start_time] to [end_time]) for [subject_name] Principal - Badria PU College"
+              required 
+              rows={4} 
+              style={{ width: '100%', fontFamily: 'inherit', resize: 'vertical', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} 
+            />
+            <small style={{ color: '#64748b' }}>
+              Available placeholders: <code>[student_name]</code>, <code>[roll_no]</code>, <code>[class_name]</code>, <code>[date]</code>, <code>[subject_name]</code>, <code>[start_time]</code>, <code>[end_time]</code>
+            </small>
+          </label>
+
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <strong>SMS Message Template</strong>
+            <textarea 
+              value={absentSmsTemplate} 
+              onChange={(e) => setAbsentSmsTemplate(e.target.value)} 
+              placeholder="Dear parent, [student_name] ([roll_no]) from class [class_name] is absent on [date]." 
+              required 
+              rows={3} 
+              style={{ width: '100%', fontFamily: 'inherit', resize: 'vertical', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} 
+            />
+            <small style={{ color: '#64748b' }}>
+              Available placeholders: same as WhatsApp templates.
+            </small>
+          </label>
+
+          <button type="submit" style={{ alignSelf: 'flex-start', padding: '10px 20px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' }}>Save Settings</button>
+        </form>
       </section>}
 
       {showLoginModal && (

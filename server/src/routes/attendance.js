@@ -2,22 +2,30 @@ import express from 'express';
 import { newId } from '../store.js';
 import { todayISO } from '../utils/normalize.js';
 
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
 export function attendanceRouter(store, smsQueue) {
   const router = express.Router();
 
-  router.get('/', async (req, res) => {
-    const { date = todayISO(), className = '' } = req.query;
+  router.get('/', asyncHandler(async (req, res) => {
+    const { date = todayISO(), className = '', year = '' } = req.query;
     const data = await store.read();
     const rows = data.students
-      .filter((student) => !className || student.className === className)
+      .filter((student) => {
+        const matchesClass = !className || student.className === className;
+        const matchesYear = !year || student.year === year;
+        return matchesClass && matchesYear;
+      })
       .map((student) => {
         const record = data.attendance.find((item) => item.studentId === student.id && item.date === date);
-        return { student, status: record?.status || 'unmarked', recordId: record?.id || null, date };
+        return { student, status: record?.status || 'present', recordId: record?.id || null, date };
       });
     res.json(rows);
-  });
+  }));
 
-  router.post('/mark', async (req, res) => {
+  router.post('/mark', asyncHandler(async (req, res) => {
     const { studentId, date = todayISO(), status } = req.body;
     if (!studentId || !['present', 'absent', 'late'].includes(status)) {
       return res.status(400).json({ error: 'studentId and valid status (present, absent, late) are required.' });
@@ -59,9 +67,9 @@ export function attendanceRouter(store, smsQueue) {
       await smsQueue.enqueueAbsentWhatsAppAlerts({ date, studentIds: [studentId] });
     }
     res.json(record);
-  });
+  }));
 
-  router.post('/bulk', async (req, res) => {
+  router.post('/bulk', asyncHandler(async (req, res) => {
     const { date = todayISO(), entries = [] } = req.body;
     const saved = await store.update((data) => {
       const out = [];
@@ -104,48 +112,60 @@ export function attendanceRouter(store, smsQueue) {
       await smsQueue.enqueueAbsentWhatsAppAlerts({ date, studentIds: absentIds });
     }
     res.json(saved);
-  });
+  }));
 
-  router.post('/queue-absent-alerts', async (req, res) => {
+  router.post('/queue-absent-alerts', asyncHandler(async (req, res) => {
     const queued = await smsQueue.enqueueAbsentAlerts(req.body);
     res.status(201).json({ queuedCount: queued.length, queued });
-  });
+  }));
 
-  router.post('/queue-absent-whatsapp-alerts', async (req, res) => {
+  router.post('/queue-absent-whatsapp-alerts', asyncHandler(async (req, res) => {
     const queued = await smsQueue.enqueueAbsentWhatsAppAlerts(req.body);
     res.status(201).json({ queuedCount: queued.length, queued });
-  });
+  }));
 
-  router.get('/summary', async (req, res) => {
-    const { date = todayISO(), className = '' } = req.query;
+  router.get('/summary', asyncHandler(async (req, res) => {
+    const { date = todayISO(), className = '', year = '' } = req.query;
     const data = await store.read();
-    const students = data.students.filter((student) => !className || student.className === className);
+    const students = data.students.filter((student) => {
+      const matchesClass = !className || student.className === className;
+      const matchesYear = !year || student.year === year;
+      return matchesClass && matchesYear;
+    });
     const counts = { total: students.length, present: 0, absent: 0, late: 0, unmarked: 0 };
     for (const student of students) {
-      const status = data.attendance.find((item) => item.studentId === student.id && item.date === date)?.status || 'unmarked';
+      const status = data.attendance.find((item) => item.studentId === student.id && item.date === date)?.status || 'present';
       counts[status] += 1;
     }
     res.json(counts);
-  });
+  }));
 
-  router.get('/trends', async (req, res) => {
-    const { className = '', days = 14 } = req.query;
+  router.get('/trends', asyncHandler(async (req, res) => {
+    const { className = '', year = '', days = 14 } = req.query;
     const data = await store.read();
     const dates = [...new Set(data.attendance.map((item) => item.date))].sort().slice(-Number(days));
     const points = dates.map((date) => {
-      const studentIds = data.students.filter((student) => !className || student.className === className).map((student) => student.id);
+      const studentIds = data.students
+        .filter((student) => {
+          const matchesClass = !className || student.className === className;
+          const matchesYear = !year || student.year === year;
+          return matchesClass && matchesYear;
+        })
+        .map((student) => student.id);
       const records = data.attendance.filter((item) => item.date === date && studentIds.includes(item.studentId));
       const total = studentIds.length || 1;
+      const absentCount = records.filter((item) => item.status === 'absent').length;
+      const lateCount = records.filter((item) => item.status === 'late').length;
       return {
         date,
-        present: records.filter((item) => item.status === 'present').length,
-        absent: records.filter((item) => item.status === 'absent').length,
-        late: records.filter((item) => item.status === 'late').length,
-        attendancePercent: Math.round((records.filter((item) => item.status === 'present' || item.status === 'late').length / total) * 100)
+        present: total - absentCount - lateCount,
+        absent: absentCount,
+        late: lateCount,
+        attendancePercent: Math.round(((total - absentCount) / total) * 100)
       };
     });
     res.json(points);
-  });
+  }));
 
   return router;
 }

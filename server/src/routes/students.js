@@ -7,25 +7,30 @@ import { normalizeStudent } from '../utils/normalize.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
 export function studentsRouter(store) {
   const router = express.Router();
 
-  router.get('/', async (req, res) => {
-    const { q = '', className = '' } = req.query;
+  router.get('/', asyncHandler(async (req, res) => {
+    const { q = '', className = '', year = '' } = req.query;
     const data = await store.read();
     const needle = String(q).toLowerCase();
     const students = data.students.filter((student) => {
       const matchesSearch = !needle || [student.name, student.rollNo, student.parentName, student.parentPhone].some((value) => String(value || '').toLowerCase().includes(needle));
       const matchesClass = !className || student.className === className;
-      return matchesSearch && matchesClass;
+      const matchesYear = !year || student.year === year;
+      return matchesSearch && matchesClass && matchesYear;
     }).sort((a, b) => `${a.className}${a.rollNo}`.localeCompare(`${b.className}${b.rollNo}`, undefined, { numeric: true }));
     res.json(students);
-  });
+  }));
 
-  router.post('/', async (req, res) => {
+  router.post('/', asyncHandler(async (req, res) => {
     const student = normalizeStudent(req.body);
-    if (!student.name || !student.rollNo || !student.className || !student.parentPhone) {
-      return res.status(400).json({ error: 'name, rollNo, className, and parentPhone are required.' });
+    if (!student.name || !student.rollNo || !student.className || !student.parentPhone || !student.year) {
+      return res.status(400).json({ error: 'name, rollNo, className, parentPhone, and year are required.' });
     }
     const created = await store.update((data) => {
       if (data.students.some((item) => item.rollNo === student.rollNo && item.className === student.className)) {
@@ -36,9 +41,9 @@ export function studentsRouter(store) {
       return row;
     });
     res.status(201).json(created);
-  });
+  }));
 
-  router.put('/:id', async (req, res) => {
+  router.put('/:id', asyncHandler(async (req, res) => {
     const payload = normalizeStudent(req.body);
     const updated = await store.update((data) => {
       const student = data.students.find((item) => item.id === req.params.id);
@@ -48,9 +53,9 @@ export function studentsRouter(store) {
     });
     if (!updated) return res.status(404).json({ error: 'Student not found.' });
     res.json(updated);
-  });
+  }));
 
-  router.delete('/:id', async (req, res) => {
+  router.delete('/:id', asyncHandler(async (req, res) => {
     const deleted = await store.update((data) => {
       const before = data.students.length;
       data.students = data.students.filter((item) => item.id !== req.params.id);
@@ -58,9 +63,9 @@ export function studentsRouter(store) {
       return before !== data.students.length;
     });
     res.status(deleted ? 204 : 404).send();
-  });
+  }));
 
-  router.post('/clear', async (req, res) => {
+  router.post('/clear', asyncHandler(async (req, res) => {
     await store.update((data) => {
       data.students = [];
       data.attendance = [];
@@ -68,9 +73,9 @@ export function studentsRouter(store) {
       return data;
     });
     res.json({ message: 'All student, attendance, and SMS queue data cleared successfully.' });
-  });
+  }));
 
-  router.post('/import', upload.single('file'), async (req, res) => {
+  router.post('/import', upload.single('file'), asyncHandler(async (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'CSV or XLSX file is required.' });
     const lower = req.file.originalname.toLowerCase();
     let rows;
@@ -120,7 +125,7 @@ export function studentsRouter(store) {
     });
 
     res.json(result);
-  });
+  }));
 
   return router;
 }

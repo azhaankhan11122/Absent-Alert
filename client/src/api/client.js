@@ -31,5 +31,7 @@ export const api = {
   queueAbsentWhatsAppAlerts: (payload) => request('/attendance/queue-absent-whatsapp-alerts', { method: 'POST', body: JSON.stringify(payload) }),
   getSmsQueue: () => request('/sms-queue'),
   retrySms: (id) => request(`/sms-queue/${id}/retry`, { method: 'POST' }),
-  clearAllData: () => request('/students/clear', { method: 'POST' })
+  clearAllData: () => request('/students/clear', { method: 'POST' }),
+  getSettings: () => request('/settings'),
+  updateSettings: (payload) => request('/settings', { method: 'PUT', body: JSON.stringify(payload) })
 };

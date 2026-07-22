@@ -29,7 +29,9 @@ export class JsonStore {
   }
 
   async read() {
-    await this.writeChain;
+    try {
+      await this.writeChain;
+    } catch {}
     const raw = await fs.readFile(this.filePath, 'utf8');
     const parsed = JSON.parse(raw);
     const result = { ...structuredClone(DEFAULT_DATA), ...parsed };
@@ -44,7 +46,11 @@ export class JsonStore {
   }
 
   async update(mutator) {
-    this.writeChain = this.writeChain.then(async () => {
+    const prev = this.writeChain;
+    this.writeChain = (async () => {
+      try {
+        await prev;
+      } catch {}
       let data;
       try {
         data = JSON.parse(await fs.readFile(this.filePath, 'utf8'));
@@ -57,7 +63,7 @@ export class JsonStore {
       const result = await mutator(data);
       await this.write(data);
       return result;
-    });
+    })();
     return this.writeChain;
   }
 }

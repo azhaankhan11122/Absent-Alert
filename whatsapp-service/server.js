@@ -135,8 +135,8 @@ async function processQueue() {
     while (messageQueue.length > 0) {
         const { studentPhoneNumber, message, resolve, reject } = messageQueue.shift();
         
-        // Safety feature: implement random delay between 5 to 15 seconds
-        const delaySeconds = Math.floor(Math.random() * (15 - 5 + 1)) + 5;
+        // Safety feature: implement random delay between 1 to 3 seconds
+        const delaySeconds = Math.floor(Math.random() * (3 - 1 + 1)) + 1;
         console.log(`Queue: Waiting for ${delaySeconds} seconds safety delay before sending...`);
         await new Promise(resolveDelay => setTimeout(resolveDelay, delaySeconds * 1000));
 
@@ -170,11 +170,12 @@ async function sendAttendanceAlert(studentPhoneNumber, message) {
         }
 
         const response = await client.sendMessage(formattedNumber, message);
-        console.log(`Message successfully sent to ${formattedNumber}. ID: ${response.id._serialized}`);
+        const messageId = response && response.id ? response.id._serialized : 'unknown';
+        console.log(`Message successfully sent to ${formattedNumber}. ID: ${messageId}`);
         
         return {
             success: true,
-            messageId: response.id._serialized,
+            messageId: messageId,
             recipient: formattedNumber
         };
     } catch (error) {
