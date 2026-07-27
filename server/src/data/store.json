@@ -1,0 +1,110 @@
+{
+  "students": [],
+  "attendance": [],
+  "smsQueue": [
+    {
+      "id": "sms_cNWX0ltQLp",
+      "studentId": "stu_5X6h5L1EOK",
+      "phone": "8904811445",
+      "message": "Dear Parent , E2E Test Student was Absent for  from  to  on 2026-07-22.\n\nPrincipal - Badria PU College\n",
+      "date": "2026-07-22",
+      "provider": "whatsapp",
+      "status": "sent",
+      "attempts": 1,
+      "maxAttempts": 5,
+      "createdAt": "2026-07-22T11:11:19.028Z",
+      "updatedAt": "2026-07-22T11:11:21.371Z",
+      "lastError": null,
+      "providerResponse": {
+        "success": true,
+        "status": "sent",
+        "details": {
+          "success": true,
+          "messageId": "unknown",
+          "recipient": "918904811445@c.us"
+        }
+      },
+      "sentAt": "2026-07-22T11:11:21.371Z"
+    },
+    {
+      "id": "sms_0nRdutivRJ",
+      "studentId": "stu_RQpP1V6uXQ",
+      "phone": "8904811445",
+      "message": "Dear Parent , MultiPeriod Student was Absent for Science from 2pm to 3pm on 2026-07-22.\n\nPrincipal - Badria PU College\n",
+      "date": "2026-07-22",
+      "provider": "whatsapp",
+      "status": "sent",
+      "attempts": 1,
+      "maxAttempts": 5,
+      "createdAt": "2026-07-22T11:11:39.771Z",
+      "updatedAt": "2026-07-22T11:11:41.315Z",
+      "lastError": null,
+      "providerResponse": {
+        "success": true,
+        "status": "sent",
+        "details": {
+          "success": true,
+          "messageId": "unknown",
+          "recipient": "918904811445@c.us"
+        }
+      },
+      "sentAt": "2026-07-22T11:11:41.315Z"
+    },
+    {
+      "id": "sms_lajQbNvnZE",
+      "studentId": "stu_RQpP1V6uXQ",
+      "phone": "8904811445",
+      "message": "Dear Parent , MultiPeriod Student was Absent for Maths from 9am to 10am on 2026-07-22.\n\nPrincipal - Badria PU College\n",
+      "date": "2026-07-22",
+      "provider": "whatsapp",
+      "status": "sent",
+      "attempts": 1,
+      "maxAttempts": 5,
+      "createdAt": "2026-07-22T11:11:47.793Z",
+      "updatedAt": "2026-07-22T11:11:52.383Z",
+      "lastError": null,
+      "providerResponse": {
+        "success": true,
+        "status": "sent",
+        "details": {
+          "success": true,
+          "messageId": "unknown",
+          "recipient": "918904811445@c.us"
+        }
+      },
+      "sentAt": "2026-07-22T11:11:52.383Z"
+    },
+    {
+      "id": "sms_tFrQQA-S93",
+      "studentId": "stu__JI1ACD6zd",
+      "phone": "8904811445",
+      "message": "Dear Parent, Sarah Khan, was absent on 2026-07-22 (2pm to 3pm) for Science\nPrincipal - Badria PU College",
+      "date": "2026-07-22",
+      "provider": "whatsapp",
+      "status": "sent",
+      "attempts": 1,
+      "maxAttempts": 5,
+      "createdAt": "2026-07-22T11:12:14.870Z",
+      "updatedAt": "2026-07-22T11:12:18.391Z",
+      "lastError": null,
+      "providerResponse": {
+        "success": true,
+        "status": "sent",
+        "details": {
+          "success": true,
+          "messageId": "unknown",
+          "recipient": "918904811445@c.us"
+        }
+      },
+      "sentAt": "2026-07-22T11:12:18.391Z"
+    }
+  ],
+  "timetable": [],
+  "settings": {
+    "schoolName": "Badria PU College",
+    "absentSmsTemplate": "Dear parent, {name} ({rollNo}) from class {className} is absent on {date}.",
+    "absentWhatsAppTemplate": "Dear Parent, [student_name], was absent on [date] ([start_time] to [end_time]) for [subject_name]\nPrincipal - Badria PU College",
+    "whatsAppAuthenticated": true,
+    "whatsAppPhoneNumberId": "your_whatsapp_phone_number_id_here"
+  }
+}
