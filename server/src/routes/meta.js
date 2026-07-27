@@ -133,6 +133,53 @@ export function metaRouter(store, gateway, smsQueue, whatsappGateway) {
     }
   }));
 
+  router.post('/whatsapp/logout', asyncHandler(async (_req, res) => {
+    try {
+      let isLocal = false;
+      let hasConfig = false;
+      try {
+        await whatsappGateway.validateConfig();
+        hasConfig = true;
+      } catch (e) {
+        console.warn('WhatsApp configuration is invalid during logout:', e.message);
+      }
+
+      if (hasConfig && whatsappGateway.config.whatsAppApiUrl && whatsappGateway.config.whatsAppApiUrl.includes('localhost')) {
+        isLocal = true;
+        try {
+          const logoutUrl = whatsappGateway.config.whatsAppApiUrl.replace(/\/send-alert\/?$/, '/logout');
+          const response = await fetch(logoutUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${whatsappGateway.config.whatsAppAccessToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          if (!response.ok) {
+            const body = await response.text();
+            console.error(`Local WhatsApp gateway logout failed: ${body}`);
+          }
+        } catch (err) {
+          console.error('Failed to log out from local WhatsApp gateway:', err.message);
+        }
+      }
+
+      const settings = await store.update((state) => {
+        state.settings.whatsAppAuthenticated = false;
+        return state.settings;
+      });
+
+      res.json({
+        ok: true,
+        connected: false,
+        configured: hasConfig,
+        whatsAppAuthenticated: false
+      });
+    } catch (error) {
+      res.status(400).json({ ok: false, error: error.message });
+    }
+  }));
+
   router.get('/sms-queue', asyncHandler(async (_req, res) => {
     res.json(await smsQueue.list());
   }));
@@ -141,6 +188,23 @@ export function metaRouter(store, gateway, smsQueue, whatsappGateway) {
     const job = await smsQueue.retry(req.params.id);
     if (!job) return res.status(404).json({ error: 'SMS job not found.' });
     res.json(job);
+  }));
+
+  router.post('/sms-queue/:id/approve', asyncHandler(async (req, res) => {
+    const job = await smsQueue.approve(req.params.id);
+    if (!job) return res.status(404).json({ error: 'Job not found.' });
+    res.json(job);
+  }));
+
+  router.post('/sms-queue/approve-all', asyncHandler(async (_req, res) => {
+    const approved = await smsQueue.approveAll();
+    res.json({ approvedCount: approved.length, approved });
+  }));
+
+  router.delete('/sms-queue/:id', asyncHandler(async (req, res) => {
+    const deleted = await smsQueue.deleteJob(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Job not found.' });
+    res.status(204).end();
   }));
 
   router.get('/timetable', asyncHandler(async (_req, res) => {

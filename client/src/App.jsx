@@ -215,6 +215,55 @@ function App() {
     }
   }
 
+  async function logoutWhatsApp() {
+    if (!window.confirm('Are you sure you want to log out from WhatsApp?')) {
+      return;
+    }
+    try {
+      const result = await api.logoutWhatsApp();
+      setWhatsApp(result);
+      setToast('WhatsApp logged out successfully.');
+    } catch (error) {
+      setToast('Logout failed: ' + error.message);
+    }
+  }
+
+  async function approveAlert(id) {
+    try {
+      await api.approveSms(id);
+      setToast('Alert approved and queued for sending.');
+      await loadAll();
+    } catch (error) {
+      setToast('Approval failed: ' + error.message);
+    }
+  }
+
+  async function approveAllAlerts() {
+    if (!window.confirm('Are you sure you want to approve and send all pending alerts?')) {
+      return;
+    }
+    try {
+      const result = await api.approveAllSms();
+      setToast(`${result.approvedCount} alert(s) approved and queued.`);
+      await loadAll();
+    } catch (error) {
+      setToast('Bulk approval failed: ' + error.message);
+    }
+  }
+
+  async function deleteAlert(id) {
+    if (!window.confirm('Are you sure you want to dismiss/delete this alert?')) {
+      return;
+    }
+    try {
+      await api.deleteSms(id);
+      setToast('Alert dismissed successfully.');
+      await loadAll();
+    } catch (error) {
+      setToast('Dismissal failed: ' + error.message);
+    }
+  }
+
   async function clearAllData() {
     if (!window.confirm('Are you sure you want to delete all students, attendance records, and SMS queue history? This action cannot be undone.')) {
       return;
@@ -251,7 +300,14 @@ function App() {
           <option value="2nd">2nd Year</option>
         </select>
         <input type="date" value={filters.date} onChange={(e) => setFilters({ ...filters, date: e.target.value })} />
-        <button className={whatsApp.connected ? 'ghost' : ''} onClick={loginWhatsApp}>{whatsApp.connected ? 'WhatsApp connected' : 'Login with WhatsApp'}</button>
+        {whatsApp.connected ? (
+          <>
+            <button className="ghost" onClick={loginWhatsApp}>WhatsApp connected</button>
+            <button className="danger" onClick={logoutWhatsApp}>Logout WhatsApp</button>
+          </>
+        ) : (
+          <button onClick={loginWhatsApp}>Login with WhatsApp</button>
+        )}
         <span className={`whatsapp-badge ${whatsApp.connected ? 'ok' : 'bad'}`}>{whatsApp.connected ? 'WhatsApp ready' : (whatsApp.configured ? 'Not connected' : 'Configure WhatsApp')}</span>
         <div className="segmented">
           <button className={view === 'attendance' ? 'active' : ''} onClick={() => setView('attendance')}>Attendance</button>
@@ -369,12 +425,103 @@ function App() {
         </div>
       </section>}
 
-      {view === 'sms' && <section className="panel">
-        <div className="panel-title"><h2>SMS Queue Reliability Monitor</h2><small>Queued jobs are retried with exponential backoff when ADB/phone is unavailable.</small></div>
-        <div className="table sms"><div className="tr head"><span>Status</span><span>Phone</span><span>Message</span><span>Attempts</span><span>Error</span></div>
-          {queue.map((job) => <div className="tr" key={job.id}><span className={`badge ${job.status}`}>{job.status}</span><span>{job.phone}</span><span>{job.message}</span><span>{job.attempts}/{job.maxAttempts}</span><span>{job.lastError || job.sentAt || '-'} {job.status === 'failed' && <button onClick={async () => { await api.retrySms(job.id); await loadAll(); }}>Retry</button>}</span></div>)}
+      {view === 'sms' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {/* Pending Verification Section */}
+          <section className="panel" style={{ margin: 0 }}>
+            <div className="panel-title">
+              <h2>Pending Verification ({queue.filter(j => j.status === 'pending').length})</h2>
+              {queue.some(j => j.status === 'pending') && (
+                <button onClick={approveAllAlerts}>Approve & Send All</button>
+              )}
+            </div>
+            <p className="hint" style={{ marginBottom: '16px' }}>Review the alerts below. Click Approve to send or Dismiss to cancel.</p>
+            
+            {queue.filter(j => j.status === 'pending').length === 0 ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: '#64748b', background: '#f8fafc', borderRadius: '14px', border: '1px dashed #cbd5e1' }}>
+                No alerts pending verification.
+              </div>
+            ) : (
+              <div className="table sms">
+                <div className="tr head">
+                  <span>Student</span>
+                  <span>Phone</span>
+                  <span>Message</span>
+                  <span>Provider</span>
+                  <span>Actions</span>
+                </div>
+                {queue.filter(j => j.status === 'pending').map((job) => {
+                  const student = students.find(s => s.id === job.studentId);
+                  return (
+                    <div className="tr" key={job.id}>
+                      <span>
+                        <b>{student?.name || 'Unknown Student'}</b>
+                        <small>{student?.className} ({student?.year} Year)</small>
+                      </span>
+                      <span>{job.phone}</span>
+                      <span style={{ fontSize: '13px', whiteSpace: 'pre-wrap' }}>{job.message}</span>
+                      <span className="badge" style={{ backgroundColor: job.provider === 'whatsapp' ? '#def7ed' : '#edf3fc', color: job.provider === 'whatsapp' ? '#0f5c36' : '#405172' }}>
+                        {job.provider}
+                      </span>
+                      <div className="actions" style={{ display: 'flex', gap: '6px' }}>
+                        <button onClick={() => approveAlert(job.id)} style={{ backgroundColor: '#1e9e58', color: 'white', padding: '6px 10px', fontSize: '12px' }}>Approve</button>
+                        <button className="danger ghost" onClick={() => deleteAlert(job.id)} style={{ padding: '6px 10px', fontSize: '12px' }}>Dismiss</button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
+          {/* Activity Queue Section */}
+          <section className="panel" style={{ margin: 0 }}>
+            <div className="panel-title">
+              <h2>SMS & WhatsApp Queue Reliability Monitor</h2>
+              <small>Queued jobs are retried with exponential backoff when provider/device is busy.</small>
+            </div>
+            
+            {queue.filter(j => j.status !== 'pending').length === 0 ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: '#64748b' }}>
+                No active or historical alert jobs in queue.
+              </div>
+            ) : (
+              <div className="table sms">
+                <div className="tr head">
+                  <span>Status</span>
+                  <span>Student / Phone</span>
+                  <span>Message</span>
+                  <span>Attempts</span>
+                  <span>Details</span>
+                </div>
+                {queue.filter(j => j.status !== 'pending').map((job) => {
+                  const student = students.find(s => s.id === job.studentId);
+                  return (
+                    <div className="tr" key={job.id}>
+                      <span className={`badge ${job.status}`}>{job.status}</span>
+                      <span>
+                        <b>{student?.name || 'Unknown'}</b>
+                        <small>{job.phone}</small>
+                        <small style={{ fontSize: '10px', textTransform: 'uppercase', display: 'inline-block', marginTop: '4px' }} className="badge">
+                          {job.provider}
+                        </small>
+                      </span>
+                      <span style={{ fontSize: '13px', whiteSpace: 'pre-wrap' }}>{job.message}</span>
+                      <span>{job.attempts}/{job.maxAttempts}</span>
+                      <span>
+                        {job.lastError || job.sentAt || '-'}
+                        {job.status === 'failed' && (
+                          <button onClick={async () => { await api.retrySms(job.id); await loadAll(); }} style={{ marginLeft: '8px', padding: '4px 8px', fontSize: '11px' }}>Retry</button>
+                        )}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
         </div>
-      </section>}
+      )}
 
       {view === 'settings' && <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1000px', margin: '0 auto' }}>
         <section className="panel" style={{ margin: 0 }}>

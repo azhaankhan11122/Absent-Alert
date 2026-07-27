@@ -110,7 +110,12 @@ This opens the native Android SMS composer via ADB. It is useful for testing pho
 - `GET /api/gateway/status`
 - `GET /api/whatsapp/status`
 - `POST /api/whatsapp/login`
+- `POST /api/whatsapp/logout`
 - `GET /api/sms-queue`
+- `POST /api/sms-queue/:id/retry`
+- `POST /api/sms-queue/:id/approve`
+- `POST /api/sms-queue/approve-all`
+- `DELETE /api/sms-queue/:id`
 
 ## WhatsApp Cloud API Integration Flow
 
@@ -186,3 +191,20 @@ Instead of the official WhatsApp Cloud API (which requires a Meta Business Accou
    * On initial run, a browser window will open (or a QR code will print in the console). Scan this QR code using the WhatsApp app on your phone.
    * Session state is persisted in `whatsapp-service/.wwebjs_auth/session`, meaning subsequent launches will automatically authenticate without scanning.
    * You can configure the gateway to run in headless or windowed mode inside [whatsapp-service/server.js](file:///Users/azhaankhan/Absent-Alert-1/whatsapp-service/server.js) under the `puppeteerConfig` parameters.
+
+## Alert Verification Step
+
+To prevent accidental alerts, all enqueued WhatsApp and SMS notifications start as `'pending'` drafts. 
+
+- **Workflow**:
+  1. Mark students absent on the **Attendance** view.
+  2. Open the **SMS Queue** view.
+  3. The **Pending Verification** section displays the drafts, matching student names, contact numbers, and final rendered messages.
+  4. Click **Approve** to queue a message for transmission, **Dismiss** to delete the draft, or **Approve & Send All** to release all pending messages in bulk.
+  5. Once approved, the messages transition to the `'queued'` state and are picked up by the background sender.
+
+## WhatsApp Web Session Logout
+
+You can disconnect your WhatsApp Web session programmatically:
+- Click **Logout WhatsApp** in the top toolbar of the dashboard.
+- The system terminates the active connection, destroys the local browser instance, cleans up the local session files, and launches a fresh instance ready for new login QR code generation.

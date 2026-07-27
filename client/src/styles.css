@@ -46,7 +46,7 @@ button.ghost { background: #eef3fb; color: #1f3864; } button.danger, .danger { b
 .card { padding: 14px; border: 1px solid #e4ebf7; border-radius: 16px; background: #f8fbff; } .card div { display: flex; gap: 8px; margin-top: 12px; }
 .sms .tr { grid-template-columns: .8fr 1fr 2fr .7fr 1.8fr; }
 .badge { display: inline-flex; width: fit-content; padding: 5px 9px; border-radius: 999px; font-weight: 900; text-transform: uppercase; font-size: 11px; background: #dce6f7; }
-.badge.sent { background: #c9f7dc; color: #0e6b38; } .badge.failed { background: #ffd9d9; color: #a10f18; } .badge.processing { background: #fff1c2; color: #7a5200; }
+.badge.sent { background: #c9f7dc; color: #0e6b38; } .badge.failed { background: #ffd9d9; color: #a10f18; } .badge.processing { background: #fff1c2; color: #7a5200; } .badge.pending { background: #e0f2fe; color: #0369a1; }
 @media (max-width: 900px) { .hero, .panel-title { align-items: flex-start; flex-direction: column; } .stats { grid-template-columns: repeat(2, 1fr); } .grid2 { grid-template-columns: 1fr; } }
 
 /* QR Code Modal Overlay */

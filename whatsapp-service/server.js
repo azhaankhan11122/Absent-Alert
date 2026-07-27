@@ -44,47 +44,90 @@ if (os.platform() === 'darwin') {
     }
 }
 
-const client = new Client({
-    authStrategy: new LocalAuth({
-        dataPath: './.wwebjs_auth'
-    }),
-    puppeteer: puppeteerConfig
-});
-
+let client;
 let isClientReady = false;
 let latestQrCode = null;
 
-// QR Code Generation event
-client.on('qr', async (qr) => {
-    console.log('\n--- SCAN THIS QR CODE WITH WHATSAPP ON YOUR PHONE ---');
-    qrcode.generate(qr, { small: true });
-    console.log('-----------------------------------------------------\n');
-    try {
-        latestQrCode = await QRCode.toDataURL(qr);
-    } catch (err) {
-        console.error('Failed to generate base64 QR code image:', err);
+async function deleteSessionDir(dirPath) {
+    for (let attempt = 1; attempt <= 5; attempt++) {
+        try {
+            if (fs.existsSync(dirPath)) {
+                fs.rmSync(dirPath, { recursive: true, force: true });
+                console.log(`Successfully deleted session directory on attempt ${attempt}.`);
+                return true;
+            }
+            return true;
+        } catch (err) {
+            console.warn(`Attempt ${attempt} to delete session directory failed: ${err.message}. Retrying in 1s...`);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
     }
-});
+    console.error(`Failed to delete session directory after 5 attempts.`);
+    return false;
+}
 
-// Client Authentication and Ready events
-client.on('ready', () => {
-    isClientReady = true;
-    latestQrCode = null;
-    console.log('WhatsApp Client is fully authenticated and ready!');
-});
-
-client.on('auth_failure', (msg) => {
-    console.error('WhatsApp Authentication Failure:', msg);
-    latestQrCode = null;
-});
-
-client.on('disconnected', (reason) => {
+async function cleanAndRestartClient() {
     isClientReady = false;
     latestQrCode = null;
-    console.log('WhatsApp Client disconnected. Reason:', reason);
-});
+    
+    try {
+        if (client) {
+            console.log('Destroying active client...');
+            await client.destroy();
+        }
+    } catch (err) {
+        console.error('Error destroying client:', err.message);
+    }
+
+    const sessionPath = './.wwebjs_auth';
+    await deleteSessionDir(sessionPath);
+
+    console.log('Re-initializing WhatsApp Web Client...');
+    createClient();
+    client.initialize();
+}
+
+function createClient() {
+    console.log('Creating WhatsApp Web Client instance...');
+    client = new Client({
+        authStrategy: new LocalAuth({
+            dataPath: './.wwebjs_auth'
+        }),
+        puppeteer: puppeteerConfig
+    });
+
+    // QR Code Generation event
+    client.on('qr', async (qr) => {
+        console.log('\n--- SCAN THIS QR CODE WITH WHATSAPP ON YOUR PHONE ---');
+        qrcode.generate(qr, { small: true });
+        console.log('-----------------------------------------------------\n');
+        try {
+            latestQrCode = await QRCode.toDataURL(qr);
+        } catch (err) {
+            console.error('Failed to generate base64 QR code image:', err);
+        }
+    });
+
+    // Client Authentication and Ready events
+    client.on('ready', () => {
+        isClientReady = true;
+        latestQrCode = null;
+        console.log('WhatsApp Client is fully authenticated and ready!');
+    });
+
+    client.on('auth_failure', (msg) => {
+        console.error('WhatsApp Authentication Failure:', msg);
+        latestQrCode = null;
+    });
+
+    client.on('disconnected', async (reason) => {
+        console.log('WhatsApp Client disconnected. Reason:', reason);
+        await cleanAndRestartClient();
+    });
+}
 
 // Initialize client
+createClient();
 client.initialize();
 
 /**
@@ -233,6 +276,30 @@ app.post('/send-alert', verifyApiKey, async (req, res) => {
             success: false,
             error: error.message
         });
+    }
+});
+
+app.post('/logout', verifyApiKey, async (req, res) => {
+    try {
+        console.log('Logout requested...');
+        if (!isClientReady) {
+            console.log('Client is not ready, performing forced cleanup and reinitialization...');
+            await cleanAndRestartClient();
+            return res.json({ success: true, message: 'Forced logout and reinitialization successful.' });
+        }
+
+        try {
+            // Attempt normal logout. This should trigger the 'disconnected' event, which calls cleanAndRestartClient.
+            await client.logout();
+            return res.json({ success: true, message: 'Logout successful.' });
+        } catch (logoutError) {
+            console.warn('Normal logout failed, falling back to forced cleanup:', logoutError.message);
+            await cleanAndRestartClient();
+            return res.json({ success: true, message: 'Forced logout after normal logout failure.' });
+        }
+    } catch (error) {
+        console.error('Error during logout:', error);
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 

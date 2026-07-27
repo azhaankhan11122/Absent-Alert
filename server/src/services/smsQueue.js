@@ -105,7 +105,7 @@ export class SmsQueueService {
       message,
       date,
       provider,
-      status: 'queued',
+      status: 'pending',
       attempts: 0,
       maxAttempts: this.config.maxSmsAttempts,
       createdAt: new Date().toISOString(),
@@ -128,6 +128,41 @@ export class SmsQueueService {
       job.nextAttemptAt = null;
       job.updatedAt = new Date().toISOString();
       return job;
+    });
+  }
+
+  async approve(jobId) {
+    return this.store.update((data) => {
+      const job = data.smsQueue.find((item) => item.id === jobId);
+      if (!job) return null;
+      if (job.status === 'pending') {
+        job.status = 'queued';
+        job.updatedAt = new Date().toISOString();
+      }
+      return job;
+    });
+  }
+
+  async approveAll() {
+    return this.store.update((data) => {
+      const approved = [];
+      for (const job of data.smsQueue) {
+        if (job.status === 'pending') {
+          job.status = 'queued';
+          job.updatedAt = new Date().toISOString();
+          approved.push(job);
+        }
+      }
+      return approved;
+    });
+  }
+
+  async deleteJob(jobId) {
+    return this.store.update((data) => {
+      const index = data.smsQueue.findIndex((item) => item.id === jobId);
+      if (index === -1) return null;
+      const [removed] = data.smsQueue.splice(index, 1);
+      return removed;
     });
   }
 
