@@ -1,210 +1,80 @@
-# Absent Alert
+<div align="center">
+  <img src="client/public/logo.svg" alt="Absent Alert Logo" width="120" />
+  <h1>Absent Alert</h1>
+  <p><b>Next-generation student attendance management, redefined.</b></p>
+</div>
 
-Full-stack student attendance manager with CSV/XLSX import, attendance dashboard, trend visualization, SMS queueing, and wired Android USB SMS gateway support.
+---
 
-## Stack
+**Absent Alert** is a full-stack, hyper-modern attendance manager equipped with real-time trend visualization, customizable timetables, teacher tracking, and robust automated alerts via WhatsApp and USB-tethered SMS gateways.
 
-- Frontend: React + Vite
-- Backend: Node.js + Express
-- Durable app data: atomic JSON store at `server/src/data/store.json` for the MVP
-- File imports: CSV and Excel (`.xlsx`)
-- SMS transport: ADB to a USB-connected Android phone / gateway service
+## ✨ Features
 
-## Run locally
+- 🌒 **End-to-End Dark Mode:** A sleek, fully dynamic dark mode with satisfying micro-animations and fluid abstract background motion graphics.
+- 📊 **Advanced Dashboard:** Real-time visual trends, intuitive student search, and fully customizable student data fields.
+- 📅 **Timetables & Teachers:** Interactive drag-and-drop timetable building and detailed daily teacher attendance metrics.
+- 💬 **Multi-Channel Alerts:** Reach parents instantly via the WhatsApp Cloud API, a local WhatsApp Web JS gateway, or a fallback USB-tethered Android SMS gateway.
+- 📥 **Bulk Imports:** Effortlessly import student rosters from CSV or Excel (`.xlsx`) files.
+- 💾 **Durable Storage:** Fast, atomic JSON store architecture for the MVP—no complex database setup required.
+
+---
+
+## 🚀 Quick Start
 
 ```bash
+# Install dependencies for both client and server
 npm run install:all
+
+# Configure environment variables
 cp server/.env.example server/.env
+
+# Launch the dev environment
 npm run dev
 ```
 
-Open the Vite URL shown by the client, usually <http://localhost:5173>. The API runs at <http://localhost:4000>.
+Open the Vite URL shown by the client (usually `http://localhost:5173`). The API runs on port `4000`.
 
-## Student import format
+---
 
-CSV/XLSX headers can use any of these names:
+## 📡 Alert Systems
 
-- `name` or `Name`
-- `rollNo`, `roll`, `Roll No`, or `roll_no`
-- `className`, `class`, `Class`, or `section`
-- `parentName`, `Parent Name`, or `guardianName`
-- `parentPhone`, `phone`, `mobile`, `Parent Phone`, or `Mobile`
+### WhatsApp Web JS Gateway (Local Proxy)
 
-Existing students are updated when `rollNo + className` matches.
+Instead of the official WhatsApp Cloud API, you can route alerts through a local Chromium browser instance that interacts directly with WhatsApp Web.
 
-## Wired Android SMS gateway
+1. **Install Dependencies:** `cd whatsapp-service && npm install`
+2. **Configure:** Create `whatsapp-service/.env` with `PORT=4001` and `WHATSAPP_SERVICE_API_KEY=your_secret`.
+3. **Route Traffic:** Update `server/.env` to point `WHATSAPP_API_URL=http://localhost:4001/send-alert`.
+4. **Launch:** Run `npm start` in the service folder and scan the generated QR code with your phone. 
 
-The backend keeps a persistent SMS queue and retries failed sends with exponential backoff. It checks `adb devices` before every send.
+### WhatsApp Cloud API Integration
 
-## WhatsApp Business notifications
-
-The app now supports sending absence notifications via WhatsApp. When a student is marked absent, the UI can capture:
-
-- `subjectName`
-- `startTime`
-- `endTime`
-
-These values are used to render a message like:
-
-`[STUDENT_NAME] has missed [CLASS_SUBJECT_NAME] from [START_TIME] to [END_TIME]`
-
-Configure WhatsApp credentials in `server/.env`:
-
-```env
-WHATSAPP_ACCESS_TOKEN=your_whatsapp_access_token
-WHATSAPP_PHONE_NUMBER_ID=your_whatsapp_phone_number_id
-WHATSAPP_API_VERSION=v17.0
-# Optional override if you need a custom endpoint URL
-WHATSAPP_API_URL=
-```
-
-The frontend includes a `Login with WhatsApp` button, and absent students marked in the attendance view will automatically enqueue WhatsApp alert jobs for parents.
-
-### Recommended automated mode
-
-Install a small Android gateway app on the phone that exposes a broadcast receiver/service with `SEND_SMS` permission. Configure:
-
-```env
-SMS_GATEWAY_MODE=broadcast
-SMS_GATEWAY_ACTION=com.absentalert.SEND_SMS
-SMS_GATEWAY_PACKAGE=com.your.gateway.package # optional
-ADB_PATH=adb
-ADB_SERIAL=                   # optional if only one phone is connected
-```
-
-The backend sends:
-
-```bash
-adb shell am broadcast -a com.absentalert.SEND_SMS --es phone "<number>" --es message "<message>"
-```
-
-The Android gateway app should receive those extras and send the SMS through the BSNL SIM in that phone.
-
-### Test / manual fallback mode
-
-```env
-SMS_GATEWAY_MODE=intent
-```
-
-This opens the native Android SMS composer via ADB. It is useful for testing phone connectivity but may require user confirmation and is not fully automated on most Android versions.
-
-## Reliability behavior
-
-- Queue statuses: `queued`, `processing`, `sent`, `failed`
-- `MAX_SMS_ATTEMPTS` controls retry attempts
-- `QUEUE_INTERVAL_MS` controls polling cadence
-- If ADB/device is disconnected, the job returns to `queued` with exponential backoff
-- Failed jobs can be retried from the dashboard
-
-## Key API endpoints
-
-- `GET/POST /api/students`
-- `PUT/DELETE /api/students/:id`
-- `POST /api/students/import`
-- `GET /api/attendance`
-- `POST /api/attendance/mark`
-- `GET /api/attendance/summary`
-- `GET /api/attendance/trends`
-- `POST /api/attendance/queue-absent-alerts`
-- `POST /api/attendance/queue-absent-whatsapp-alerts`
-- `GET /api/gateway/status`
-- `GET /api/whatsapp/status`
-- `POST /api/whatsapp/login`
-- `POST /api/whatsapp/logout`
-- `GET /api/sms-queue`
-- `POST /api/sms-queue/:id/retry`
-- `POST /api/sms-queue/:id/approve`
-- `POST /api/sms-queue/approve-all`
-- `DELETE /api/sms-queue/:id`
-
-## WhatsApp Cloud API Integration Flow
-
-This application supports sending absent student alerts to parents via WhatsApp using the official **WhatsApp Cloud API** (hosted by Meta).
-
-### Step-by-Step Integration & Flow:
-
-#### Step 1: Set Up Meta Developer Account
-1. Go to the [Meta for Developers Portal](https://developers.facebook.com/) and register as a developer.
-2. Click **Create App**, select **Other** -> **Business**, and choose a name for your app.
-3. In the App Dashboard, scroll down to **WhatsApp** and click **Set up**.
-4. Link your Meta Business Account (or let it auto-create a default test account).
-
-#### Step 2: Obtain API Credentials
-1. In the Meta developer portal sidebar, navigate to **WhatsApp** -> **API Setup**.
-2. Locate the following configurations:
-   - **Temporary access token** (useful for immediate testing; expires in 24 hours).
-   - **Phone Number ID** (a unique ID for your sender phone number).
-3. To send test messages in sandbox mode, register your own phone number in the **To** recipient list.
-4. *(For Production)* Register a real phone number, verify it, and generate a **Permanent Access Token** via the Meta Business Suite system user console (assigning it `whatsapp_business_messaging` permission).
-
-#### Step 3: Configure Environment Variables
-Open your `server/.env` file and set the following variables:
+Absent Alert fully supports the official Meta WhatsApp Cloud API for enterprise-grade message delivery. Set the following in your `server/.env`:
 ```env
 WHATSAPP_ACCESS_TOKEN=your_access_token_here
 WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id_here
 WHATSAPP_API_VERSION=v17.0
 ```
+Templates automatically parse context from the app: `{name} has missed {subjectName} from {startTime} to {endTime}`.
 
-#### Step 4: Connect the Gateway
-1. Run the app (`npm run dev`) and access the frontend dashboard at [http://localhost:5173](http://localhost:5173).
-2. Look at the top toolbar. The WhatsApp status badge will show **Configure WhatsApp** (if env vars are empty) or **Not connected** (if they are configured but not verified).
-3. Click the **Login with WhatsApp** button. The server validates the configuration against Meta's Graph API.
-4. Once verified, the badge will turn green and display **WhatsApp ready**.
+### Wired Android SMS Gateway (Fallback)
 
-#### Step 5: Queue & Send WhatsApp Alerts
-1. Go to the **Attendance** tab and mark students absent.
-2. Fill out the optional **Subject name**, **Start time**, and **End time** fields in the attendance toolbar (e.g. *Science*, *10:00*, *11:00*). These fields will automatically fill the template variables.
-3. Click **Send absent WhatsApp alerts**.
-4. The backend generates messages using the template: `{name} has missed {subjectName} from {startTime} to {endTime}`.
-5. The alerts are added as jobs to the queue. The background queue processor will pick them up, submit them to the WhatsApp Cloud API, and report statuses/errors under the **SMS Queue** tab.
+For offline or rural deployments, connect an Android device via USB. The backend manages a persistent SMS queue with exponential backoff and uses `adb` to bridge messages to the device's native SMS capabilities.
 
-## Local WhatsApp Web JS Gateway (Alternative)
+- **Automated Broadcast Mode:** `SMS_GATEWAY_MODE=broadcast` (Requires a small companion Android app).
+- **Test / Intent Mode:** `SMS_GATEWAY_MODE=intent` (Opens the native SMS composer).
 
-Instead of the official WhatsApp Cloud API (which requires a Meta Business Account), you can route alerts through a local browser session using `whatsapp-web.js`. This spins up a Chromium browser instance locally and interacts directly with WhatsApp Web.
+---
 
-### Setup & Run:
+## 🛠 Architecture & API
 
-1. **Install Dependencies**:
-   ```bash
-   cd whatsapp-service
-   npm install
-   ```
+- **Frontend:** React + Vite
+- **Backend:** Node.js + Express
+- **State & Queue:** Polling processor with state lifecycle (`pending` -> `queued` -> `processing` -> `sent` | `failed`)
 
-2. **Configure Environment Variables**:
-   Create `whatsapp-service/.env`:
-   ```env
-   PORT=4001
-   WHATSAPP_SERVICE_API_KEY=absent_alert_secret_key_2026
-   ```
-
-3. **Configure Main Server to Route to Local Gateway**:
-   Open `server/.env` and update:
-   ```env
-   WHATSAPP_API_URL=http://localhost:4001/send-alert
-   WHATSAPP_ACCESS_TOKEN=absent_alert_secret_key_2026
-   ```
-
-4. **Launch the Gateway**:
-   ```bash
-   npm start
-   ```
-   * On initial run, a browser window will open (or a QR code will print in the console). Scan this QR code using the WhatsApp app on your phone.
-   * Session state is persisted in `whatsapp-service/.wwebjs_auth/session`, meaning subsequent launches will automatically authenticate without scanning.
-   * You can configure the gateway to run in headless or windowed mode inside [whatsapp-service/server.js](file:///Users/azhaankhan/Absent-Alert-1/whatsapp-service/server.js) under the `puppeteerConfig` parameters.
-
-## Alert Verification Step
-
-To prevent accidental alerts, all enqueued WhatsApp and SMS notifications start as `'pending'` drafts. 
-
-- **Workflow**:
-  1. Mark students absent on the **Attendance** view.
-  2. Open the **SMS Queue** view.
-  3. The **Pending Verification** section displays the drafts, matching student names, contact numbers, and final rendered messages.
-  4. Click **Approve** to queue a message for transmission, **Dismiss** to delete the draft, or **Approve & Send All** to release all pending messages in bulk.
-  5. Once approved, the messages transition to the `'queued'` state and are picked up by the background sender.
-
-## WhatsApp Web Session Logout
-
-You can disconnect your WhatsApp Web session programmatically:
-- Click **Logout WhatsApp** in the top toolbar of the dashboard.
-- The system terminates the active connection, destroys the local browser instance, cleans up the local session files, and launches a fresh instance ready for new login QR code generation.
+### Key Endpoints
+- `GET/POST /api/students` — Roster management and imports
+- `POST /api/attendance/mark` — Mark attendance
+- `GET /api/attendance/trends` — Dashboard analytics
+- `POST /api/attendance/queue-absent-whatsapp-alerts` — Enqueue targeted WhatsApp messages
+- `GET /api/whatsapp/status` — Real-time gateway status monitoring
