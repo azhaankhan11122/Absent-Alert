@@ -1,8 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AlertTriangle, CheckCircle2, Clock, MessageSquare, RefreshCw, Search, Upload, Users, Settings } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Clock, MessageSquare, RefreshCw, Search, Upload, Users, Settings, UserPlus, Calendar, Moon, Sun } from 'lucide-react';
 import { api } from './api/client';
 import TrendChart from './components/TrendChart';
+import StudentSearchTab from './components/StudentSearchTab';
+import TimeTablesTab from './components/TimeTablesTab';
+import TeachersTab from './components/TeachersTab';
 import './styles.css';
 
 const emptyForm = { name: '', rollNo: '', className: '', year: '1st', parentName: '', parentPhone: '', shariyath: false };
@@ -30,18 +33,29 @@ function App() {
   const [view, setView] = useState('attendance');
   const [toast, setToast] = useState('');
 
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   // Settings states
   const [schoolName, setSchoolName] = useState('');
   const [absentSmsTemplate, setAbsentSmsTemplate] = useState('');
   const [absentWhatsAppTemplate, setAbsentWhatsAppTemplate] = useState('');
+  const [customStudentFields, setCustomStudentFields] = useState([]);
 
   // Timetable states
   const [timetable, setTimetable] = useState([]);
+  const [teachers, setTeachers] = useState([]);
   const emptyTimetableForm = { day: 'Monday', subjectName: '', startTime: '09:00', endTime: '10:00', className: '', year: '1st' };
   const [timetableForm, setTimetableForm] = useState(emptyTimetableForm);
 
+  const [timetableSlots, setTimetableSlots] = useState(['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']);
+
   const loadAll = async () => {
-    const [studentsData, classesData, attendanceData, summaryData, trendsData, queueData, gatewayData, whatsAppData, settingsData, timetableData] = await Promise.all([
+    const [studentsData, classesData, attendanceData, summaryData, trendsData, queueData, gatewayData, whatsAppData, settingsData, timetableData, teachersData] = await Promise.all([
       api.getStudents({ q: filters.q, className: filters.className, year: filters.year }),
       api.getClasses(),
       api.getAttendance({ date: filters.date, className: filters.className, year: filters.year }),
@@ -51,7 +65,8 @@ function App() {
       api.getGatewayStatus(),
       api.getWhatsAppStatus(),
       api.getSettings().catch(() => ({})),
-      api.getTimetable().catch(() => [])
+      api.getTimetable().catch(() => []),
+      api.getTeachers().catch(() => [])
     ]);
     setStudents(studentsData);
     setClasses(classesData);
@@ -62,20 +77,25 @@ function App() {
     setGateway(gatewayData);
     setWhatsApp(whatsAppData);
     setTimetable(timetableData || []);
+    setTeachers(teachersData || []);
     if (settingsData) {
       setSchoolName(settingsData.schoolName || '');
       setAbsentSmsTemplate(settingsData.absentSmsTemplate || '');
       setAbsentWhatsAppTemplate(settingsData.absentWhatsAppTemplate || '');
+      setCustomStudentFields(settingsData.customStudentFields || []);
+      setTimetableSlots(settingsData.timetableSlots || ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']);
     }
   };
 
   async function saveSettings(event) {
     event.preventDefault();
     try {
-      const result = await api.updateSettings({ schoolName, absentSmsTemplate, absentWhatsAppTemplate });
+      const result = await api.updateSettings({ schoolName, absentSmsTemplate, absentWhatsAppTemplate, customStudentFields, timetableSlots });
       setSchoolName(result.schoolName || '');
       setAbsentSmsTemplate(result.absentSmsTemplate || '');
       setAbsentWhatsAppTemplate(result.absentWhatsAppTemplate || '');
+      setCustomStudentFields(result.customStudentFields || []);
+      setTimetableSlots(result.timetableSlots || ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']);
       setToast('Settings saved successfully.');
     } catch (error) {
       setToast(error.message);
@@ -108,10 +128,10 @@ function App() {
   useEffect(() => { loadAll().catch((error) => setToast(error.message)); }, [filters.q, filters.className, filters.date, filters.year]);
   useEffect(() => {
     const id = setInterval(() => {
-      api.getSmsQueue().then(setQueue).catch(() => {});
-      api.getGatewayStatus().then(setGateway).catch(() => {});
-      api.getWhatsAppStatus().then(setWhatsApp).catch(() => {});
-      api.getTimetable().then(setTimetable).catch(() => {});
+      api.getSmsQueue().then(setQueue).catch(() => { });
+      api.getGatewayStatus().then(setGateway).catch(() => { });
+      api.getWhatsAppStatus().then(setWhatsApp).catch(() => { });
+      api.getTimetable().then(setTimetable).catch(() => { });
     }, 7000);
     return () => clearInterval(id);
   }, []);
@@ -277,17 +297,36 @@ function App() {
     }
   }
 
+  const handleThemeToggle = () => {
+    document.body.classList.add('theme-toggling');
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+    setTimeout(() => {
+      document.body.classList.remove('theme-toggling');
+    }, 400); // Matches CSS transition duration
+  };
+
   return (
+    <>
+    <div className="background-mesh"></div>
     <main>
       <header className="hero">
-        <div>
-          <p className="eyebrow">Wired SMS Gateway Attendance System</p>
-          <h1>Absent Alert</h1>
-          <p>Manage students, mark attendance, visualize trends, and send automatic SMS alerts through a USB-connected Android phone with a BSNL SIM.</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+          <img src="/logo.svg" alt="Absent Alert Logo" style={{ width: '80px', height: '80px', borderRadius: '20px', objectFit: 'contain', background: 'rgba(255,255,255,0.1)', padding: '4px', zIndex: 1 }} />
+          <div style={{ zIndex: 1 }}>
+            <p className="eyebrow">Wired SMS Gateway Attendance System</p>
+            <h1>Absent Alert</h1>
+            <p>Manage students, mark attendance, visualize trends, and send automatic alerts on WhatsApp.</p>
+          </div>
         </div>
-        <div className={`gateway ${gateway.ok ? 'ok' : 'bad'}`}>
-          {gateway.ok ? <CheckCircle2 /> : <AlertTriangle />}
-          <div><b>{gateway.ok ? 'ADB phone connected' : 'SMS gateway offline'}</b><small>{gateway.selected?.serial || gateway.error || 'Connect phone and enable USB debugging'}</small></div>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'flex-end', zIndex: 1 }}>
+          <button className="ghost" onClick={handleThemeToggle} style={{ borderRadius: '50%', padding: '12px' }}>
+            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+          <div className={`gateway ${gateway.ok ? 'ok' : 'bad'}`}>
+            {gateway.ok ? <CheckCircle2 /> : <AlertTriangle />}
+            <div><b>{gateway.ok ? 'ADB phone connected' : 'SMS gateway offline'}</b><small>{gateway.selected?.serial || gateway.error || 'Connect phone and enable USB debugging'}</small></div>
+          </div>
         </div>
       </header>
 
@@ -312,6 +351,9 @@ function App() {
         <div className="segmented">
           <button className={view === 'attendance' ? 'active' : ''} onClick={() => setView('attendance')}>Attendance</button>
           <button className={view === 'students' ? 'active' : ''} onClick={() => setView('students')}>Students</button>
+          <button className={view === 'student-search' ? 'active' : ''} onClick={() => setView('student-search')}>Search</button>
+          <button className={view === 'timetables' ? 'active' : ''} onClick={() => setView('timetables')}>Time Tables</button>
+          <button className={view === 'teachers' ? 'active' : ''} onClick={() => setView('teachers')}>Teachers</button>
           <button className={view === 'sms' ? 'active' : ''} onClick={() => setView('sms')}>SMS Queue</button>
           <button className={view === 'settings' ? 'active' : ''} onClick={() => setView('settings')} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Settings size={14} /> Settings</button>
         </div>
@@ -333,7 +375,7 @@ function App() {
 
       {view === 'attendance' && <section className="panel">
         <div className="panel-title"><h2>Class-wise Attendance</h2><button className="danger" onClick={queueAlerts}><MessageSquare size={16} /> Send absent WhatsApp alerts</button></div>
-        
+
         {todayTimetableSlots.length > 0 ? (
           <div className="timetable-bar" style={{ padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', margin: '0 0 16px' }}>
             <strong style={{ fontSize: '13px', color: '#475569', display: 'block', marginBottom: '8px' }}>Today's Timetable ({todayDayName}) - Click a class to pre-fill</strong>
@@ -341,8 +383,8 @@ function App() {
               {todayTimetableSlots.map((slot) => {
                 const isActive = filters.className === slot.className && filters.year === slot.year && absentDetails.subjectName === slot.subjectName && absentDetails.startTime === slot.startTime && absentDetails.endTime === slot.endTime;
                 return (
-                  <button 
-                    key={slot.id} 
+                  <button
+                    key={slot.id}
                     onClick={() => {
                       setFilters({ ...filters, className: slot.className, year: slot.year });
                       setAbsentDetails({ subjectName: slot.subjectName, startTime: slot.startTime, endTime: slot.endTime });
@@ -375,8 +417,8 @@ function App() {
             </div>
           </div>
         ) : (
-          <div className="timetable-bar" style={{ padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1px dashed #cbd5e1', margin: '0 0 16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: '13px', color: '#64748b' }}>No classes scheduled for today ({todayDayName || 'None'}). Configure them under the <strong>Settings</strong> tab.</span>
+          <div className="timetable-bar" style={{ padding: '12px', background: 'var(--bg-subtle)', borderRadius: '12px', border: '1px dashed var(--border)', margin: '0 0 16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: '13px', color: 'var(--text-hint)' }}>No classes scheduled for today ({todayDayName || 'None'}). Configure them under the <strong>Settings</strong> tab.</span>
           </div>
         )}
 
@@ -398,7 +440,17 @@ function App() {
       {view === 'students' && <section className="grid2">
         <form className="panel form" onSubmit={saveStudent}>
           <div className="panel-title"><h2>{editingId ? 'Edit Student' : 'Add Student'}</h2><label className="upload"><Upload size={16} /> Import CSV/XLSX<input type="file" accept=".csv,.xlsx" onChange={importFile} hidden /></label></div>
-          {Object.keys(emptyForm).filter((key) => key !== 'shariyath' && key !== 'year').map((key) => <input key={key} required={['name', 'rollNo', 'className', 'parentPhone'].includes(key)} placeholder={key} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />)}
+          {Object.keys(emptyForm).filter((key) => key !== 'shariyath' && key !== 'year').map((key) => <input key={key} required={['name', 'rollNo', 'className', 'parentPhone'].includes(key)} placeholder={key} value={form[key] || ''} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />)}
+
+          {customStudentFields.map(field => (
+            <input
+              key={field.name}
+              placeholder={field.name}
+              value={form[field.name] || ''}
+              onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
+            />
+          ))}
+
           <select value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value })}>
             <option value="1st">1st Year</option>
             <option value="2nd">2nd Year</option>
@@ -436,7 +488,7 @@ function App() {
               )}
             </div>
             <p className="hint" style={{ marginBottom: '16px' }}>Review the alerts below. Click Approve to send or Dismiss to cancel.</p>
-            
+
             {queue.filter(j => j.status === 'pending').length === 0 ? (
               <div style={{ padding: '24px', textAlign: 'center', color: '#64748b', background: '#f8fafc', borderRadius: '14px', border: '1px dashed #cbd5e1' }}>
                 No alerts pending verification.
@@ -480,7 +532,7 @@ function App() {
               <h2>SMS & WhatsApp Queue Reliability Monitor</h2>
               <small>Queued jobs are retried with exponential backoff when provider/device is busy.</small>
             </div>
-            
+
             {queue.filter(j => j.status !== 'pending').length === 0 ? (
               <div style={{ padding: '24px', textAlign: 'center', color: '#64748b' }}>
                 No active or historical alert jobs in queue.
@@ -523,6 +575,31 @@ function App() {
         </div>
       )}
 
+      {view === 'student-search' && (
+        <StudentSearchTab
+          students={students}
+          attendance={attendance}
+          customStudentFields={customStudentFields}
+        />
+      )}
+
+      {view === 'timetables' && (
+        <TimeTablesTab
+          classes={classes}
+          timetable={timetable}
+          teachers={teachers}
+          timetableSlots={timetableSlots}
+          onUpdate={loadAll}
+        />
+      )}
+
+      {view === 'teachers' && (
+        <TeachersTab
+          teachers={teachers}
+          onUpdate={loadAll}
+        />
+      )}
+
       {view === 'settings' && <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1000px', margin: '0 auto' }}>
         <section className="panel" style={{ margin: 0 }}>
           <div className="panel-title"><h2>Customise Message Templates</h2></div>
@@ -531,16 +608,16 @@ function App() {
               <strong>School / College Name</strong>
               <input value={schoolName} onChange={(e) => setSchoolName(e.target.value)} placeholder="Badria PU College" required style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
             </label>
-            
+
             <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <strong>WhatsApp Message Template</strong>
-              <textarea 
-                value={absentWhatsAppTemplate} 
-                onChange={(e) => setAbsentWhatsAppTemplate(e.target.value)} 
+              <textarea
+                value={absentWhatsAppTemplate}
+                onChange={(e) => setAbsentWhatsAppTemplate(e.target.value)}
                 placeholder="Dear Parent, [student_name], was absent on [date] ([start_time] to [end_time]) for [subject_name] Principal - Badria PU College"
-                required 
-                rows={4} 
-                style={{ width: '100%', fontFamily: 'inherit', resize: 'vertical', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} 
+                required
+                rows={4}
+                style={{ width: '100%', fontFamily: 'inherit', resize: 'vertical', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
               />
               <small style={{ color: '#64748b' }}>
                 Available placeholders: <code>[student_name]</code>, <code>[roll_no]</code>, <code>[class_name]</code>, <code>[date]</code>, <code>[subject_name]</code>, <code>[start_time]</code>, <code>[end_time]</code>
@@ -549,13 +626,13 @@ function App() {
 
             <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <strong>SMS Message Template</strong>
-              <textarea 
-                value={absentSmsTemplate} 
-                onChange={(e) => setAbsentSmsTemplate(e.target.value)} 
-                placeholder="Dear parent, [student_name] ([roll_no]) from class [class_name] is absent on [date]." 
-                required 
-                rows={3} 
-                style={{ width: '100%', fontFamily: 'inherit', resize: 'vertical', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} 
+              <textarea
+                value={absentSmsTemplate}
+                onChange={(e) => setAbsentSmsTemplate(e.target.value)}
+                placeholder="Dear parent, [student_name] ([roll_no]) from class [class_name] is absent on [date]."
+                required
+                rows={3}
+                style={{ width: '100%', fontFamily: 'inherit', resize: 'vertical', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
               />
               <small style={{ color: '#64748b' }}>
                 Available placeholders: same as WhatsApp templates.
@@ -568,14 +645,116 @@ function App() {
 
         <section className="panel" style={{ margin: 0 }}>
           <div className="panel-title">
+            <h2>Custom Student Fields</h2>
+          </div>
+          <p style={{ fontSize: '14px', color: '#64748b', margin: '4px 0 16px' }}>Define extra information you want to store for each student (e.g. Address, Date of Birth).</p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {customStudentFields.map((field, index) => (
+              <div key={index} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input
+                  value={field.name}
+                  onChange={(e) => {
+                    const newFields = [...customStudentFields];
+                    newFields[index].name = e.target.value;
+                    setCustomStudentFields(newFields);
+                  }}
+                  placeholder="Field Name"
+                  style={{ padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1', flex: 1 }}
+                />
+                <button
+                  className="danger ghost"
+                  onClick={() => {
+                    const newFields = [...customStudentFields];
+                    newFields.splice(index, 1);
+                    setCustomStudentFields(newFields);
+                  }}
+                  style={{ padding: '8px 12px' }}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+
+            <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+              <button
+                className="ghost"
+                onClick={() => setCustomStudentFields([...customStudentFields, { name: '' }])}
+              >
+                + Add Field
+              </button>
+              <button
+                onClick={(e) => saveSettings(e)}
+                style={{ background: '#3b82f6', color: 'white' }}
+              >
+                Save Fields
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section className="panel" style={{ margin: 0 }}>
+          <div className="panel-title">
+            <h2>Timetable Time Slots</h2>
+          </div>
+          <p style={{ fontSize: '14px', color: '#64748b', margin: '4px 0 16px' }}>Define the daily time slots used in your timetables.</p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {timetableSlots.map((slot, index) => (
+              <div key={index} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input
+                  type="time"
+                  value={slot}
+                  onChange={(e) => {
+                    const newSlots = [...timetableSlots];
+                    newSlots[index] = e.target.value;
+                    // Sort them chronologically
+                    newSlots.sort();
+                    setTimetableSlots(newSlots);
+                  }}
+                  style={{ padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1', width: '150px' }}
+                />
+                <button
+                  className="danger ghost"
+                  onClick={() => {
+                    const newSlots = [...timetableSlots];
+                    newSlots.splice(index, 1);
+                    setTimetableSlots(newSlots);
+                  }}
+                  style={{ padding: '8px 12px' }}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+
+            <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+              <button
+                className="ghost"
+                onClick={() => setTimetableSlots([...timetableSlots, '08:00'].sort())}
+              >
+                + Add Time Slot
+              </button>
+              <button
+                onClick={(e) => saveSettings(e)}
+                style={{ background: '#3b82f6', color: 'white' }}
+              >
+                Save Slots
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section className="panel" style={{ margin: 0 }}>
+          <div className="panel-title">
             <h2>Weekly Timetable Manager</h2>
           </div>
           <p style={{ fontSize: '14px', color: '#64748b', margin: '4px 0 16px' }}>Configure your weekly schedule. Today's classes will automatically appear on the main Attendance view for easy pre-filling.</p>
-          
+
           <div className="grid2" style={{ gap: '24px', alignItems: 'start' }}>
             <form onSubmit={saveTimetableSlot} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <h3>Add Class to Schedule</h3>
-              
+
               <label style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <span style={{ fontSize: '13px', fontWeight: '600', color: '#475569' }}>Day of the Week</span>
                 <select value={timetableForm.day} onChange={(e) => setTimetableForm({ ...timetableForm, day: e.target.value })} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', width: '100%' }}>
@@ -648,7 +827,7 @@ function App() {
           <div className="modal-content">
             <h3>Link WhatsApp</h3>
             <p>Scan this QR code using WhatsApp on your phone (Linked Devices &gt; Link a Device) to link this session.</p>
-            
+
             <div className="qr-container">
               {qrCodeUrl ? (
                 <img src={qrCodeUrl} alt="WhatsApp QR Code" className="qr-image" />
@@ -659,7 +838,7 @@ function App() {
                 </div>
               )}
             </div>
-            
+
             <button className="modal-close-btn" onClick={() => { setShowLoginModal(false); setQrCodeUrl(null); }}>
               Close
             </button>
@@ -667,7 +846,9 @@ function App() {
         </div>
       )}
     </main>
+    </>
   );
 }
 
-createRoot(document.getElementById('root')).render(<App />);
+const root = createRoot(document.getElementById('root'));
+root.render(<App />);

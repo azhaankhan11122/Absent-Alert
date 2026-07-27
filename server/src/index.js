@@ -10,6 +10,8 @@ import { SmsQueueService } from './services/smsQueue.js';
 import { studentsRouter } from './routes/students.js';
 import { attendanceRouter } from './routes/attendance.js';
 import { metaRouter } from './routes/meta.js';
+import { teachersRouter } from './routes/teachers.js';
+import { teacherAttendanceRouter } from './routes/teacherAttendance.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const config = {
@@ -42,6 +44,8 @@ app.use(express.json({ limit: '1mb' }));
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'absent-alert-api' }));
 app.use('/api/students', studentsRouter(store));
 app.use('/api/attendance', attendanceRouter(store, smsQueue));
+app.use('/api/teachers', teachersRouter(store));
+app.use('/api/teacher-attendance', teacherAttendanceRouter(store));
 app.use('/api', metaRouter(store, gateway, smsQueue, whatsappGateway));
 
 app.use((err, _req, res, _next) => {

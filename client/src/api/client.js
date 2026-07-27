@@ -40,5 +40,12 @@ export const api = {
   updateSettings: (payload) => request('/settings', { method: 'PUT', body: JSON.stringify(payload) }),
   getTimetable: () => request('/timetable'),
   createTimetable: (payload) => request('/timetable', { method: 'POST', body: JSON.stringify(payload) }),
-  deleteTimetable: (id) => request(`/timetable/${id}`, { method: 'DELETE' })
+  deleteTimetable: (id) => request(`/timetable/${id}`, { method: 'DELETE' }),
+  getTeachers: () => request('/teachers'),
+  createTeacher: (payload) => request('/teachers', { method: 'POST', body: JSON.stringify(payload) }),
+  updateTeacher: (id, payload) => request(`/teachers/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
+  deleteTeacher: (id) => request(`/teachers/${id}`, { method: 'DELETE' }),
+  getTeacherAttendance: (params = {}) => request(`/teacher-attendance?${new URLSearchParams(params)}`),
+  getTeacherStats: () => request('/teacher-attendance/stats'),
+  markTeacherAttendance: (payload) => request('/teacher-attendance/mark', { method: 'POST', body: JSON.stringify(payload) })
 };

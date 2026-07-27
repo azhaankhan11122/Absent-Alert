@@ -7,10 +7,14 @@ const DEFAULT_DATA = {
   attendance: [],
   smsQueue: [],
   timetable: [],
+  teachers: [],
+  teacherAttendance: [],
   settings: {
     schoolName: 'Absent Alert',
     absentSmsTemplate: 'Dear parent, {name} ({rollNo}) from class {className} is absent on {date}.',
-    absentWhatsAppTemplate: '{name} has missed {subjectName} from {startTime} to {endTime}'
+    absentWhatsAppTemplate: '{name} has missed {subjectName} from {startTime} to {endTime}',
+    customStudentFields: [],
+    timetableSlots: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
   }
 };
 

@@ -19,11 +19,19 @@ export function metaRouter(store, gateway, smsQueue, whatsappGateway) {
   }));
 
   router.put('/settings', asyncHandler(async (req, res) => {
-    const settings = await store.update((data) => {
-      data.settings = { ...data.settings, ...req.body };
+    const { schoolName, absentSmsTemplate, absentWhatsAppTemplate, customStudentFields, timetableSlots } = req.body;
+    const result = await store.update((data) => {
+      data.settings = {
+        ...data.settings,
+        schoolName: schoolName !== undefined ? String(schoolName) : data.settings.schoolName,
+        absentSmsTemplate: absentSmsTemplate !== undefined ? String(absentSmsTemplate) : data.settings.absentSmsTemplate,
+        absentWhatsAppTemplate: absentWhatsAppTemplate !== undefined ? String(absentWhatsAppTemplate) : data.settings.absentWhatsAppTemplate,
+        customStudentFields: customStudentFields !== undefined ? customStudentFields : data.settings.customStudentFields,
+        timetableSlots: timetableSlots !== undefined ? timetableSlots : data.settings.timetableSlots
+      };
       return data.settings;
     });
-    res.json(settings);
+    res.json(result);
   }));
 
   router.get('/gateway/status', asyncHandler(async (_req, res) => {
