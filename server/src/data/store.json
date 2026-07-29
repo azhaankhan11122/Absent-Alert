@@ -100,11 +100,23 @@
     }
   ],
   "timetable": [],
+  "teachers": [],
+  "teacherAttendance": [],
   "settings": {
     "schoolName": "Badria PU College",
     "absentSmsTemplate": "Dear parent, {name} ({rollNo}) from class {className} is absent on {date}.",
     "absentWhatsAppTemplate": "Dear Parent, [student_name], was absent on [date] ([start_time] to [end_time]) for [subject_name]\nPrincipal - Badria PU College",
-    "whatsAppAuthenticated": true,
+    "customStudentFields": [],
+    "timetableSlots": [
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00"
+    ],
+    "whatsAppAuthenticated": false,
     "whatsAppPhoneNumberId": "your_whatsapp_phone_number_id_here"
   }
 }

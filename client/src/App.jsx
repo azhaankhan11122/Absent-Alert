@@ -1,19 +1,24 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
+import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle2, Clock, MessageSquare, RefreshCw, Search, Upload, Users, Settings, UserPlus, Calendar, Moon, Sun } from 'lucide-react';
 import { api } from './api/client';
 import TrendChart from './components/TrendChart';
 import StudentSearchTab from './components/StudentSearchTab';
 import TimeTablesTab from './components/TimeTablesTab';
+import HolographicLogo from './components/HolographicLogo';
+import HolographicWarning from './components/HolographicWarning';
+import Navigation from './components/Navigation';
+import StatCard from './components/StatCard';
 import TeachersTab from './components/TeachersTab';
+import PlasmaBackground from './components/PlasmaBackground';
 import './styles.css';
+
+const TrendChart3D = lazy(() => import('./components/TrendChart3D'));
+const StudentsVault3D = lazy(() => import('./components/StudentsVault3D'));
 
 const emptyForm = { name: '', rollNo: '', className: '', year: '1st', parentName: '', parentPhone: '', shariyath: false };
 const today = new Date().toISOString().slice(0, 10);
-
-function Stat({ label, value, icon }) {
-  return <div className="stat"><span>{icon}</span><div><b>{value}</b><small>{label}</small></div></div>;
-}
 
 function App() {
   const [students, setStudents] = useState([]);
@@ -306,12 +311,11 @@ function App() {
   };
 
   return (
-    <>
-    <div className="background-mesh"></div>
+    <PlasmaBackground>
     <main>
       <header className="hero">
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <img src="/logo.svg" alt="Absent Alert Logo" style={{ width: '80px', height: '80px', borderRadius: '20px', objectFit: 'contain', background: 'rgba(255,255,255,0.1)', padding: '4px', zIndex: 1 }} />
+          <HolographicLogo />
           <div style={{ zIndex: 1 }}>
             <p className="eyebrow">Wired SMS Gateway Attendance System</p>
             <h1>Absent Alert</h1>
@@ -323,10 +327,7 @@ function App() {
           <button className="ghost" onClick={handleThemeToggle} style={{ borderRadius: '50%', padding: '12px' }}>
             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
-          <div className={`gateway ${gateway.ok ? 'ok' : 'bad'}`}>
-            {gateway.ok ? <CheckCircle2 /> : <AlertTriangle />}
-            <div><b>{gateway.ok ? 'ADB phone connected' : 'SMS gateway offline'}</b><small>{gateway.selected?.serial || gateway.error || 'Connect phone and enable USB debugging'}</small></div>
-          </div>
+          <HolographicWarning gateway={gateway} />
         </div>
       </header>
 
@@ -348,36 +349,42 @@ function App() {
           <button onClick={loginWhatsApp}>Login with WhatsApp</button>
         )}
         <span className={`whatsapp-badge ${whatsApp.connected ? 'ok' : 'bad'}`}>{whatsApp.connected ? 'WhatsApp ready' : (whatsApp.configured ? 'Not connected' : 'Configure WhatsApp')}</span>
-        <div className="segmented">
-          <button className={view === 'attendance' ? 'active' : ''} onClick={() => setView('attendance')}>Attendance</button>
-          <button className={view === 'students' ? 'active' : ''} onClick={() => setView('students')}>Students</button>
-          <button className={view === 'student-search' ? 'active' : ''} onClick={() => setView('student-search')}>Search</button>
-          <button className={view === 'timetables' ? 'active' : ''} onClick={() => setView('timetables')}>Time Tables</button>
-          <button className={view === 'teachers' ? 'active' : ''} onClick={() => setView('teachers')}>Teachers</button>
-          <button className={view === 'sms' ? 'active' : ''} onClick={() => setView('sms')}>SMS Queue</button>
-          <button className={view === 'settings' ? 'active' : ''} onClick={() => setView('settings')} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Settings size={14} /> Settings</button>
-        </div>
+        <Navigation view={view} setView={setView} />
       </section>
 
       {toast && <div className="toast" onClick={() => setToast('')}>{toast}</div>}
 
-      <section className="stats">
-        <Stat label="Students" value={summary.total} icon={<Users />} />
-        <Stat label="Present" value={summary.present} icon={<CheckCircle2 />} />
-        <Stat label="Absent" value={summary.absent} icon={<AlertTriangle />} />
-        <Stat label="Late" value={summary.late} icon={<Clock />} />
-      </section>
+      <AnimatePresence mode="wait">
+        {view !== 'students' && (
+          <motion.div
+            key="dashboard-stats"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+            transition={{ duration: 0.3 }}
+          >
+            <section className="stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+              <StatCard label="Students" value={summary.total} icon={<Users size={24} />} color="#3b82f6" />
+              <StatCard label="Present" value={summary.present} icon={<CheckCircle2 size={24} />} color="#10b981" />
+              <StatCard label="Absent" value={summary.absent} icon={<AlertTriangle size={24} />} color="#ef4444" />
+              <StatCard label="Late" value={summary.late} icon={<Clock size={24} />} color="#f59e0b" />
+            </section>
 
-      <section className="panel">
-        <div className="panel-title"><h2>Attendance Trend</h2><small>Last marked dates for selected class</small></div>
-        <TrendChart points={trends} />
-      </section>
+            <section className="panel" style={{ background: 'transparent', border: 'none', boxShadow: 'none' }}>
+              <div className="panel-title" style={{ marginBottom: '16px' }}><h2>Attendance Trend</h2><small>Last marked dates for selected class</small></div>
+              <Suspense fallback={<div style={{ width: '100%', height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8b5cf6' }}>Loading 3D Data Landscape...</div>}>
+                <TrendChart3D data={trends} />
+              </Suspense>
+            </section>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {view === 'attendance' && <section className="panel">
         <div className="panel-title"><h2>Class-wise Attendance</h2><button className="danger" onClick={queueAlerts}><MessageSquare size={16} /> Send absent WhatsApp alerts</button></div>
 
         {todayTimetableSlots.length > 0 ? (
-          <div className="timetable-bar" style={{ padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', margin: '0 0 16px' }}>
+          <div className="timetable-bar" style={{ padding: '12px', background: 'var(--bg-tr)', borderRadius: '12px', border: '1px solid var(--border-config)', margin: '0 0 16px' }}>
             <strong style={{ fontSize: '13px', color: '#475569', display: 'block', marginBottom: '8px' }}>Today's Timetable ({todayDayName}) - Click a class to pre-fill</strong>
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
               {todayTimetableSlots.map((slot) => {
@@ -392,9 +399,9 @@ function App() {
                     }}
                     style={{
                       padding: '8px 12px',
-                      background: isActive ? '#3b82f6' : 'white',
-                      color: isActive ? 'white' : '#1e293b',
-                      border: '1px solid ' + (isActive ? '#2563eb' : '#cbd5e1'),
+                      background: isActive ? 'var(--primary-color)' : 'var(--bg-panel)',
+                      color: isActive ? 'white' : 'var(--text-primary)',
+                      border: '1px solid ' + (isActive ? 'var(--primary-color)' : 'var(--border-color)'),
                       borderRadius: '8px',
                       cursor: 'pointer',
                       fontSize: '13px',
@@ -461,11 +468,16 @@ function App() {
           </label>
           <button type="submit">{editingId ? 'Update student' : 'Add student'}</button>
         </form>
-        <div className="panel">
-          <div className="panel-title">
-            <h2>Students</h2>
+        <motion.div 
+          className="panel"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+        >
+          <div className="panel-title" style={{ padding: '20px' }}>
+            <h2>Students Data Vault</h2>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <small>{students.length} result(s)</small>
+              <small>{students.length} record(s)</small>
               {students.length > 0 && (
                 <button className="danger ghost" onClick={clearAllData} style={{ padding: '4px 8px', fontSize: '12px' }}>
                   Clear Database
@@ -473,8 +485,16 @@ function App() {
               )}
             </div>
           </div>
-          <div className="cards">{students.map((student) => <article className="card" key={student.id}><b>{student.name} {student.shariyath && <span style={{ marginLeft: '8px', padding: '2px 6px', fontSize: '10px', backgroundColor: '#ffe9e9', color: '#d9383a', border: '1px solid #ffccd0', borderRadius: '6px' }}>Shariyath</span>}</b><small>{student.className} • {student.year} Year • Roll {student.rollNo}</small><small>{student.parentName || 'Parent'}: {student.parentPhone}</small><div><button onClick={() => { setEditingId(student.id); setForm({ ...emptyForm, ...student }); }}>Edit</button><button className="danger ghost" onClick={async () => { await api.deleteStudent(student.id); await loadAll(); }}>Delete</button></div></article>)}</div>
-        </div>
+          
+          <div style={{ flex: 1, position: 'relative' }}>
+             <StudentsVault3D 
+               students={students} 
+               searchTerm={filters.q}
+               onEdit={(student) => { setEditingId(student.id); setForm({ ...emptyForm, ...student }); }}
+               onDelete={async (id) => { await api.deleteStudent(id); await loadAll(); }}
+             />
+          </div>
+        </motion.div>
       </section>}
 
       {view === 'sms' && (
@@ -490,7 +510,7 @@ function App() {
             <p className="hint" style={{ marginBottom: '16px' }}>Review the alerts below. Click Approve to send or Dismiss to cancel.</p>
 
             {queue.filter(j => j.status === 'pending').length === 0 ? (
-              <div style={{ padding: '24px', textAlign: 'center', color: '#64748b', background: '#f8fafc', borderRadius: '14px', border: '1px dashed #cbd5e1' }}>
+              <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', background: 'var(--bg-tr)', borderRadius: '14px', border: '1px dashed var(--border-color)' }}>
                 No alerts pending verification.
               </div>
             ) : (
@@ -800,11 +820,11 @@ function App() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', minWidth: '0' }}>
               <h3>Current Weekly Schedule</h3>
               {timetable.length === 0 ? (
-                <div style={{ padding: '24px', background: '#f8fafc', borderRadius: '8px', border: '1px dashed #cbd5e1', textAlign: 'center', color: '#64748b' }}>
+                <div style={{ padding: '24px', background: 'var(--bg-tr)', borderRadius: '8px', border: '1px dashed var(--border-color)', textAlign: 'center', color: 'var(--text-muted)' }}>
                   No classes scheduled yet.
                 </div>
               ) : (
-                <div className="table" style={{ fontSize: '13px', background: 'white' }}>
+                <div className="table" style={{ fontSize: '13px', background: 'var(--bg-panel)' }}>
                   <div className="tr head"><span>Day</span><span>Subject</span><span>Class (Year)</span><span>Time</span><span>Action</span></div>
                   {timetable.map((slot) => (
                     <div className="tr" key={slot.id} style={{ display: 'flex', alignItems: 'center' }}>
@@ -846,7 +866,7 @@ function App() {
         </div>
       )}
     </main>
-    </>
+    </PlasmaBackground>
   );
 }
 

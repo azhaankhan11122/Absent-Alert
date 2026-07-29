@@ -10,8 +10,10 @@
 
 ## ✨ Features
 
-- 🌒 **End-to-End Dark Mode:** A sleek, fully dynamic dark mode with satisfying micro-animations and fluid abstract background motion graphics.
-- 📊 **Advanced Dashboard:** Real-time visual trends, intuitive student search, and fully customizable student data fields.
+- 🌌 **Futuristic Holographic Dashboard:** Features a fluid dark-mode plasma motion graphic, glowing wireframe logos, and glassmorphism elements powered by React Three Fiber and Framer Motion.
+- 🗄️ **Immersive 3D Data Vault:** A fully interactive spatial 3D rack for student data, allowing users to physically "enter" the vault, unfold data blocks, and view holographic statistics.
+- 📈 **3D Attendance Trends:** Visualize attendance patterns through an interactive R3F data landscape instead of flat charts.
+- 🌒 **End-to-End Dark Mode:** A sleek, fully dynamic dark mode with satisfying micro-animations and seamless tab transitions via Framer Motion.
 - 📅 **Timetables & Teachers:** Interactive drag-and-drop timetable building and detailed daily teacher attendance metrics.
 - 💬 **Multi-Channel Alerts:** Reach parents instantly via the WhatsApp Cloud API, a local WhatsApp Web JS gateway, or a fallback USB-tethered Android SMS gateway.
 - 📥 **Bulk Imports:** Effortlessly import student rosters from CSV or Excel (`.xlsx`) files.

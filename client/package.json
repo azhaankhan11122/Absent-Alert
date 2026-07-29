@@ -10,11 +10,16 @@
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@react-three/postprocessing": "^3.0.4",
     "@vitejs/plugin-react": "latest",
+    "framer-motion": "^12.43.0",
     "lucide-react": "^0.468.0",
     "react": "latest",
     "react-dom": "latest",
     "recharts": "^3.10.1",
+    "three": "^0.185.1",
     "vite": "latest"
   }
 }
